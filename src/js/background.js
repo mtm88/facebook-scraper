@@ -20,8 +20,8 @@ chrome.runtime.onMessage.addListener(
       }
       case "userSelectedPage": {
         // check later, maybe not needed?
-        chrome.storage.sync.set({ selectedPageId: payload.id });
-        closeSelector();
+        // chrome.storage.sync.set({ selectedPageId: payload.id });
+        // closeSelector();
         startScraper();
       }
     }
@@ -38,5 +38,9 @@ function closeSelector() {
 }
 
 function startScraper() {
-  window.scrollTo(0, document.body.clientHeight);
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    if (tabs && tabs.length) {
+      chrome.tabs.executeScript(tabs[0].id, { file: "./src/js/scripts/contentScraper.js" });
+    }
+  });
 }
