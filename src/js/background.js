@@ -13,15 +13,30 @@ chrome.runtime.onInstalled.addListener(function () {
 });
 
 chrome.runtime.onMessage.addListener(
-  ({ action }, sender, sendResponse) => {
+  ({ action, payload }, sender, sendResponse) => {
     switch (action) {
-      case "close": {
-        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-          if (tabs && tabs.length) {
-            chrome.tabs.executeScript(tabs[0].id, { file: "./src/js/scripts/closeSelector.js" });
-          }
-        });
+      case "closeSelector": {
+        closeSelector();
+      }
+      case "userSelectedPage": {
+        // check later, maybe not needed?
+        chrome.storage.sync.set({ selectedPageId: payload.id });
+        closeSelector();
+        startScraper();
       }
     }
   }
 );
+
+// Tab is selected more than once, extract it?
+function closeSelector() {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    if (tabs && tabs.length) {
+      chrome.tabs.executeScript(tabs[0].id, { file: "./src/js/scripts/closeSelector.js" });
+    }
+  });
+}
+
+function startScraper() {
+  window.scrollTo(0, document.body.clientHeight);
+}

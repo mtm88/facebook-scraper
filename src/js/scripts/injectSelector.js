@@ -1,18 +1,24 @@
 (function () {
-  const div = buildInjectionDiv();
+  const scrollableArea = document.getElementsByClassName("uiScrollableAreaWrap scrollable");
+  const userSeesModal = !!scrollableArea.length;
+  
+  const div = buildInjectionDiv(scrollableArea, userSeesModal);
   div.appendChild(buildCloseButtonDiv());
   div.appendChild(buildMessageParagraph());
   div.appendChild(buildContentDiv());
 
-  document.body.appendChild(div);
+  if (userSeesModal) {
+    return scrollableArea[0].appendChild(div);
+  }
+  return document.body.appendChild(div);
 })();
 
-function buildInjectionDiv() {
+function buildInjectionDiv(scrollableArea, userSeesModal) {
   const div = document.createElement("div");
 
-  const documentBodyWidth = document.body.clientWidth;
-  const calculatedDivLeft = (documentBodyWidth / 2) - 250;
-  const calculatedDivWidth = (documentBodyWidth * 0.3);
+  const currentElementBodyWidth = userSeesModal ? scrollableArea[0].clientWidth : document.body.clientWidth;
+  const calculatedDivLeft = userSeesModal ? ((document.body.clientWidth - currentElementBodyWidth) / 2) + (currentElementBodyWidth / 2 - 250) : (currentElementBodyWidth / 2) - 250;
+  const calculatedDivWidth = (currentElementBodyWidth * (userSeesModal ? 0.6 : 0.3));
 
   div.id = "selectionInjectorDiv";
   div.style.display = "flex";
@@ -56,7 +62,7 @@ function buildCloseButtonDiv() {
   closeDiv.textContent = "X";
 
   closeDiv.onmouseover = () => closeDiv.style.cursor = "pointer";
-  closeDiv.onclick = () => chrome.runtime.sendMessage({ action: "close" });
+  closeDiv.onclick = () => chrome.runtime.sendMessage({ action: "closeSelector" });
 
   return closeDiv;
 }
@@ -81,18 +87,20 @@ function buildContentDiv() {
     pageDiv.style["border-style"] = "solid";
     pageDiv.style["border-color"] = "rgb(0, 0, 0, 0.25)";
     pageDiv.style["border-width"] = "1px";
-    pageDiv.style["border-radius"] = "1px";
-    
+    pageDiv.style["border-radius"] = "3px";
+
     pageDiv.textContent = `Page ${id}`;
-    
+
     pageDiv.onmouseover = () => {
       pageDiv.style.cursor = "pointer";
       pageDiv.style["background-color"] = "#55e89a";
     }
-    
+
     pageDiv.onmouseleave = () => {
       pageDiv.style["background-color"] = "#ffffff";
     }
+
+    pageDiv.onclick = () => chrome.runtime.sendMessage({ action: "userSelectedPage" });
 
     contentDiv.appendChild(pageDiv);
   });
