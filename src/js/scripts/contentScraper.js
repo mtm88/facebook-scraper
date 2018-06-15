@@ -57,7 +57,7 @@
       return parsedPost;
     });
 
-    chrome.storage.sync.set({ parsedPosts });
+    chrome.storage.local.set({ parsedPosts: JSON.stringify(parsedPosts) });
   }
 
   function fetchContentPosts(userSeesModal, scrollCounter = 0) {
@@ -67,10 +67,10 @@
       const scrollableArea = document.getElementsByClassName("uiScrollableAreaWrap scrollable");
       divsWithPost = scrollableArea[0].getElementsByClassName("userContentWrapper") || [];
     }
-    
-    chrome.storage.sync.set({ divsWithPost, divsWithPostLength: divsWithPost.length });
-    
-    chrome.storage.sync.get(["recordsToPullCount"], (results) => {
+
+    chrome.storage.local.set({ divsWithPost, divsWithPostLength: divsWithPost.length });
+
+    chrome.storage.local.get(["recordsToPullCount"], (results) => {
       if (divsWithPost.length >= results.recordsToPullCount) {
         // slice the array if we've pulled more than we require
         if (divsWithPost.length > results.recordsToPullCount) {
@@ -78,7 +78,7 @@
         }
         return parseContentPosts(divsWithPost);
       }
-      
+
       if (scrollCounter > 10) {
         return alert("There seems to be a problem with fetching the requested number of posts. Please try again.");
       }

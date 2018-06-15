@@ -20,7 +20,7 @@ chrome.runtime.onMessage.addListener(
         break;
       }
       case "userSelectedPage": {
-        chrome.storage.sync.set({ selectedPageId: payload.id }, () => {
+        chrome.storage.local.set({ selectedPageId: payload.id }, () => {
           closeSelector();
           injectProgressWindow();
           startScraper();

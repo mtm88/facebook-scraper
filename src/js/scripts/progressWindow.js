@@ -2,55 +2,80 @@
   const div = document.createElement("div");
 
   const currentElementBodyWidth = document.body.clientWidth;
-  const calculatedDivWidth = currentElementBodyWidth * 0.3;
+  const calculatedDivWidth = currentElementBodyWidth * 0.7;
   const calculatedDivLeft = (currentElementBodyWidth / 2) - (calculatedDivWidth / 2);
 
   div.id = "progressWindowDiv";
-  div.style.display = "flex";
-  div.style.flexDirection = "column";
-  div.style.width = `${calculatedDivWidth}px`;
-  div.style.minHeight = "100px";
-  div.style.position = "fixed";
-  div.style.top = "100px";
-  div.style.left = `${calculatedDivLeft}px`;
-  div.style["border-style"] = "solid";
-  div.style["border-width"] = "1px";
-  div.style["z-index"] = 1000;
-  div.style.backgroundColor = "#ffffff";
-
+  div.style.cssText = `display: flex; flex-direction: column; width: ${calculatedDivWidth}px; position: fixed; top: 100px; left: ${calculatedDivLeft}px; z-index: 1000; background-color: #ffffff`;
   document.body.appendChild(div);
+
+  const headerWrapperDiv = document.createElement("div");
+  headerWrapperDiv.id = "headerWrapperDiv";
+  headerWrapperDiv.style.cssText = "flex: 1; background-color: #ffffff";
+  div.appendChild(headerWrapperDiv);
 
   const progressSummary = document.createElement("p");
   progressSummary.textContent = "Progress summary:";
-  progressSummary.style.padding = "10px 20px";
-  progressSummary.style.fontWeight = 800;
-  progressSummary.style.fontSize = "14px";
+  progressSummary.style.cssText = "padding: 10px 20px; font-weight: 800; font-size: 14px;";
+  headerWrapperDiv.appendChild(progressSummary);
 
-  div.appendChild(progressSummary);
-
-  const loadedSoFar = document.createElement("p");
-  loadedSoFar.textContent = "Posts loaded so far: 0";
-  loadedSoFar.style.paddingLeft = "20px";
-  loadedSoFar.style.marginTop = "8px";
-  loadedSoFar.style.marginBottom = "20px";
-  loadedSoFar.style.fontWeight = 500;
-
-  div.appendChild(loadedSoFar);
-
-  const parsedPostsWrapper = document.createElement("div");
-  div.style.flex = "1";
-  div.style.backgroundColor = "gray";
-
-  div.appendChild(parsedPostsWrapper);
   chrome.storage.onChanged.addListener((storage) => {
     for (key in storage) {
       switch (key) {
         case "divsWithPostLength": {
-          loadedSoFar.textContent = `Posts loaded so far: ${storage[key].newValue}`;
+          let loadedSoFar = document.getElementById("loadedSoFar");
+          const textContent = `Posts loaded: ${storage[key].newValue}`;
+
+          if (!loadedSoFar) {
+            loadedSoFar = document.createElement("p");
+            loadedSoFar.id = "loadedSoFar";
+            loadedSoFar.textContent = "Posts loaded: 0";
+            loadedSoFar.style.cssText = "padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-weight: 500";
+            headerWrapperDiv.appendChild(loadedSoFar);
+          }
+          loadedSoFar.textContent = textContent;
+
           break;
         }
         case "parsedPosts": {
+          const parsedPosts = JSON.parse(storage[key].newValue);
 
+          postsTableFields = [{ label: "Title", flex: 4 }, { label: "Author", flex: 2 }, { label: "Shares", flex: 1 }, { label: "Comments", flex: 1 }, { label: "Reactions", flex: 1 }]
+
+          
+          const parsedPostsWrapper = document.createElement("div");
+          parsedPostsWrapper.id = "parsedPostsWrapper";
+          parsedPostsWrapper.style.cssText = "flex: 1; background-color: #ffffff; overflow: auto; height: 400px";
+          div.appendChild(parsedPostsWrapper);
+
+          const headerFieldsWrapper = document.createElement("div");
+          headerFieldsWrapper.id = "headerFieldsWrapper";
+          headerFieldsWrapper.style.cssText = "flex: 1; display: flex; flexDirection: row;";
+          parsedPostsWrapper.appendChild(headerFieldsWrapper);
+
+          postsTableFields.forEach(({ label, flex }) => {
+            const fieldHeader = document.createElement("div");
+            fieldHeader.id = `${label.toLowerCase()}Header`;
+            fieldHeader.style.cssText = `flex: ${flex}; border-right: solid 1px; border-bottom: solid 2px; border-top: solid 2px; border-color: rgb(0, 0, 0, 0.25); padding: 5px; font-weight: 600;`;
+            fieldHeader.textContent = label;
+            headerFieldsWrapper.appendChild(fieldHeader);
+          });
+
+          Array.from(parsedPosts).forEach((parsedPost) => {
+            const postDivWrapper = document.createElement("div");
+            postDivWrapper.id = `${parsedPost.contentId}Wrapper`;
+            postDivWrapper.style.cssText = "flex: 1; display: flex; flexDirection: row;";
+
+            postsTableFields.forEach(({ label, flex }) => {
+              const newCellField = document.createElement("div");
+              newCellField.id = `${label}cellField`;
+              newCellField.style.cssText = `flex: ${flex}; border-right: solid 1px; border-color: rgb(0, 0, 0, 0.25); padding: 5px;`;
+              newCellField.textContent = parsedPost[label.toLowerCase()];
+              postDivWrapper.appendChild(newCellField);
+            });
+
+            parsedPostsWrapper.appendChild(postDivWrapper);
+          });
           break;
         }
         default: break;
