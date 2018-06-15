@@ -16,16 +16,19 @@ chrome.runtime.onMessage.addListener(
   ({ action, payload }, sender, sendResponse) => {
     switch (action) {
       case "closeSelector": {
-        closeSelector();
-        break;
+        return closeSelector();
+      }
+      case "removeInjection": {
+        return chrome.storage.local.set({ injectionToRemove: payload ? payload.id : null }, () => {
+          return removeInjection();
+        });
       }
       case "userSelectedPage": {
-        chrome.storage.local.set({ selectedPageId: payload.id }, () => {
-          closeSelector();
+        return chrome.storage.local.set({ selectedPageId: payload.id, injectionToRemove: payload.divId }, () => {
+          removeInjection();
           injectProgressWindow();
-          startScraper();
+          return startScraper();
         });
-        break;
       }
       default: break;
     }
@@ -33,10 +36,10 @@ chrome.runtime.onMessage.addListener(
 );
 
 // Tab is selected more than once, extract it?
-function closeSelector() {
+function removeInjection() {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     if (tabs && tabs.length) {
-      chrome.tabs.executeScript(tabs[0].id, { file: "./src/js/scripts/closeSelector.js" });
+      chrome.tabs.executeScript(tabs[0].id, { file: "./src/js/scripts/removeInjection.js" });
     }
   });
 }

@@ -48,7 +48,7 @@ function buildCloseButtonDiv() {
   closeDiv.textContent = "X";
 
   closeDiv.onmouseover = () => closeDiv.style.cursor = "pointer";
-  closeDiv.onclick = () => chrome.runtime.sendMessage({ action: "closeSelector" });
+  closeDiv.onclick = () => chrome.runtime.sendMessage({ action: "removeInjection", payload: { id: "selectionInjectorDiv" } });
 
   return closeDiv;
 }
@@ -64,7 +64,7 @@ function buildContentDiv() {
     const pageDiv = document.createElement("div");
 
     pageDiv.id = id;
-    pageDiv.style.cssText = "margin: 10px; border-style: solid 1px; border-color: rgb(0, 0, 0, 0.25); border-radius: 3px";
+    pageDiv.style.cssText = "padding: 10px 20px; margin: 10px; border: solid 1px; border-color: rgb(0, 0, 0, 0.25); border-radius: 3px";
     pageDiv.textContent = `Page ${id}`;
 
     pageDiv.onmouseover = () => {
@@ -76,7 +76,7 @@ function buildContentDiv() {
       pageDiv.style["background-color"] = "#ffffff";
     }
 
-    pageDiv.onclick = () => chrome.runtime.sendMessage({ action: "userSelectedPage", payload: { id } });
+    pageDiv.onclick = () => chrome.runtime.sendMessage({ action: "userSelectedPage", payload: { id, divId: "selectionInjectorDiv"  } });
 
     contentDiv.appendChild(pageDiv);
   });

@@ -9,9 +9,18 @@
   div.style.cssText = `display: flex; flex-direction: column; width: ${calculatedDivWidth}px; position: fixed; top: 100px; left: ${calculatedDivLeft}px; z-index: 1000; background-color: #ffffff`;
   document.body.appendChild(div);
 
+  const closeDiv = document.createElement("div");
+  closeDiv.id = "closeButtonDiv";
+  closeDiv.style.cssText = "position: absolute; top: 0; right: 0; padding: 8px 10px; font-size: 15px;";
+  closeDiv.textContent = "X";
+  div.appendChild(closeDiv);
+
+  closeDiv.onmouseover = () => closeDiv.style.cursor = "pointer";
+  closeDiv.onclick = () => chrome.runtime.sendMessage({ action: "removeInjection", payload: { id: "progressWindowDiv" } });
+
   const headerWrapperDiv = document.createElement("div");
   headerWrapperDiv.id = "headerWrapperDiv";
-  headerWrapperDiv.style.cssText = "flex: 1; background-color: #ffffff";
+  headerWrapperDiv.style.cssText = "flex: 1; background-color: #ffffff; border: 1px solid;";
   div.appendChild(headerWrapperDiv);
 
   const progressSummary = document.createElement("p");
@@ -42,7 +51,7 @@
 
           postsTableFields = [{ label: "Title", flex: 4 }, { label: "Author", flex: 2 }, { label: "Shares", flex: 1 }, { label: "Comments", flex: 1 }, { label: "Reactions", flex: 1 }]
 
-          
+
           const parsedPostsWrapper = document.createElement("div");
           parsedPostsWrapper.id = "parsedPostsWrapper";
           parsedPostsWrapper.style.cssText = "flex: 1; background-color: #ffffff; overflow: auto; height: 400px";
