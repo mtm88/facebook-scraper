@@ -1,16 +1,19 @@
 (function () {
   const scrollableArea = document.getElementsByClassName("uiScrollableAreaWrap scrollable");
+  const existingSelectionDiv = document.getElementById("selectionInjectorDiv");
   const userSeesModal = !!scrollableArea.length;
-  
-  const div = buildInjectionDiv(scrollableArea, userSeesModal);
-  div.appendChild(buildCloseButtonDiv());
-  div.appendChild(buildMessageParagraph());
-  div.appendChild(buildContentDiv());
 
-  if (userSeesModal) {
-    return scrollableArea[0].appendChild(div);
+  if (!existingSelectionDiv) {
+    const div = buildInjectionDiv(scrollableArea, userSeesModal);
+    div.appendChild(buildCloseButtonDiv());
+    div.appendChild(buildMessageParagraph());
+    div.appendChild(buildContentDiv());
+
+    if (userSeesModal) {
+      return scrollableArea[0].appendChild(div);
+    }
+    return document.body.appendChild(div);
   }
-  return document.body.appendChild(div);
 })();
 
 function buildInjectionDiv(scrollableArea, userSeesModal) {
@@ -100,7 +103,7 @@ function buildContentDiv() {
       pageDiv.style["background-color"] = "#ffffff";
     }
 
-    pageDiv.onclick = () => chrome.runtime.sendMessage({ action: "userSelectedPage" });
+    pageDiv.onclick = () => chrome.runtime.sendMessage({ action: "userSelectedPage", payload: { id } });
 
     contentDiv.appendChild(pageDiv);
   });

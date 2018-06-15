@@ -19,10 +19,10 @@ chrome.runtime.onMessage.addListener(
         closeSelector();
       }
       case "userSelectedPage": {
-        // check later, maybe not needed?
-        // chrome.storage.sync.set({ selectedPageId: payload.id });
+        chrome.storage.sync.set({ selectedPageId: payload.id }, () => {
+          startScraper();
+        });
         // closeSelector();
-        startScraper();
       }
     }
   }

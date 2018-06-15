@@ -4,7 +4,8 @@
   "description": "Chrome plugin to scrape Facebook public posts",
   "permissions": [
     "activeTab",
-    "declarativeContent"
+    "declarativeContent",
+    "storage"
   ],
   "background": {
     "scripts": [
