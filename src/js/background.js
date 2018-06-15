@@ -17,13 +17,17 @@ chrome.runtime.onMessage.addListener(
     switch (action) {
       case "closeSelector": {
         closeSelector();
+        break;
       }
       case "userSelectedPage": {
         chrome.storage.sync.set({ selectedPageId: payload.id }, () => {
+          closeSelector();
+          injectProgressWindow();
           startScraper();
         });
-        // closeSelector();
+        break;
       }
+      default: break;
     }
   }
 );
@@ -41,6 +45,14 @@ function startScraper() {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     if (tabs && tabs.length) {
       chrome.tabs.executeScript(tabs[0].id, { file: "./src/js/scripts/contentScraper.js" });
+    }
+  });
+}
+
+function injectProgressWindow() {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    if (tabs && tabs.length) {
+      chrome.tabs.executeScript(tabs[0].id, { file: "./src/js/scripts/progressWindow.js" });
     }
   });
 }

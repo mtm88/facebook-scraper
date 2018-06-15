@@ -1,18 +1,31 @@
-const page = document.getElementById('buttonDiv');
+function constructOptions() {
+  const recordsCountInputValue = document.getElementById("recordsToPullCount");
+  const recordsCountApplyButton = document.getElementById("applyButton");
+  recordsCountApplyButton.onmouseover = () => recordsCountApplyButton.style.cursor = "pointer";
 
-const kButtonColors = ['#3aa757', '#e8453c', '#f9bb2d', '#4688f1'];
+  recordsCountApplyButton.addEventListener('click', updateRecordsToPullCount);
 
-function constructOptions(kButtonColors) {
-  for (let item of kButtonColors) {
-    let button = document.createElement('button');
-    button.style.backgroundColor = item;
-    button.addEventListener('click', function () {
-      chrome.storage.sync.set({ color: item }, function () {
-        console.log('color is ' + item);
-      })
-    });
-    page.appendChild(button);
-  }
+  chrome.storage.sync.get(['recordsToPullCount'], (results) => {
+    if (!Object.keys(results).length) {
+      chrome.storage.sync.set({ recordsToPullCount: 50 });
+    } else {
+      recordsCountInputValue.value = results.recordsToPullCount;
+    }
+  });
 }
 
-constructOptions(kButtonColors);
+constructOptions();
+
+function updateRecordsToPullCount() {
+  const recordsCountInputValue = document.getElementById("recordsToPullCount");
+  const updatedValue = recordsCountInputValue.value;
+  const valueIsNumber = !isNaN(updatedValue);
+
+  if (valueIsNumber) {
+    return chrome.storage.sync.set({
+      recordsToPullCount: updatedValue,
+    }, () => alert('Settings Updated!'));
+  }
+
+  return alert("Incorrect field value");
+}
