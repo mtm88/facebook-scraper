@@ -6,6 +6,7 @@
 
   function parseContentPosts(divsWithPost) {
     const fieldsToMap = ["title", "author", "timeAdded", "link", "contentId", "comments", "shares", "reactions"];
+    const searchURL = parsedSearchURL(opts);
 
     const fieldParsers = {
       header: ({ post }) => {
@@ -42,7 +43,7 @@
     };
 
     const parsedPosts = Array.from(divsWithPost).map((post) => {
-      const parsedPost = {};
+      const parsedPost = { searchURL };
 
       fieldsToMap.forEach((field) => {
         const header = fieldParsers.header({ post });
@@ -53,11 +54,19 @@
         } catch (error) {
           parsedPost[field] = null;
         }
-      })
+      });
+
       return parsedPost;
     });
 
     chrome.storage.local.set({ parsedPosts: JSON.stringify(parsedPosts) });
+  }
+
+  function parsedSearchURL(opts) {
+    if (opts && opts.currentURL) {
+      return opts.currentURL.slice(0, opts.currentURL.indexOf("?"));
+    }
+    return null;
   }
 
   function fetchContentPosts(userSeesModal, scrollCounter = 0) {

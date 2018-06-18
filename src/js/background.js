@@ -16,14 +16,14 @@ chrome.runtime.onMessage.addListener(function ({ action, payload }, sender, send
   switch (action) {
     case "removeInjection": {
       return chrome.storage.local.set({ injectionToRemove: payload ? payload.id : null }, () => {
-        return executeScript("removeInjection");
+        return scriptRunner("removeInjection");
       });
     }
     case "userSelectedPage": {
       return chrome.storage.local.set({ selectedPageId: payload.id, injectionToRemove: payload.divId }, () => {
-        executeScript("removeInjection");
-        executeScript("progressWindow");
-        return executeScript("contentScraper");
+        scriptRunner("removeInjection");
+        scriptRunner("progressWindow");
+        return scriptRunner("contentScraper");
       });
     }
     default: break;
@@ -31,10 +31,17 @@ chrome.runtime.onMessage.addListener(function ({ action, payload }, sender, send
 }
 );
 
-function executeScript(fileName) {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+function scriptRunner(fileName, opts = {}) {
+  return chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (tabs && tabs.length) {
-      chrome.tabs.executeScript(tabs[0].id, { file: `./src/js/scripts/${fileName}.js` });
+      const { url, id } = tabs[0];
+
+      return chrome.tabs.executeScript(id, {
+        code: `opts = ${JSON.stringify({
+          currentURL: url,
+        })}`,
+      }, () => chrome.tabs.executeScript(id, { file: `./src/js/scripts/${fileName}.js` }));
     }
+    return alert("Sorry, it looks like you have no tabs opened in your browser! :-(");
   });
 }
