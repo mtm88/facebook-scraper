@@ -1,4 +1,5 @@
 (() => {
+  debugger;
   const scrollableArea = document.getElementsByClassName("uiScrollableAreaWrap scrollable");
   const existingSelectionDiv = document.getElementById("selectionInjectorDiv");
   const userSeesModal = !!scrollableArea.length;
@@ -7,7 +8,10 @@
     const div = buildInjectionDiv(scrollableArea, userSeesModal);
     div.appendChild(buildCloseButtonDiv());
     div.appendChild(buildMessageParagraph());
-    div.appendChild(buildContentDiv());
+
+    if (opts && opts.pages && opts.pages.length) {
+      div.appendChild(buildContentDiv());
+    }
 
     if (userSeesModal) {
       return scrollableArea[0].appendChild(div);
@@ -58,9 +62,7 @@ function buildContentDiv() {
   contentDiv.id = "contentDiv";
   contentDiv.style.cssText = "display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start; margin: 0px 5px 30px;";
 
-  const collectPages = mockedCollectPages();
-
-  collectPages.forEach(({ id, label }) => {
+  opts.pages.forEach(({ id, label }) => {
     const pageDiv = document.createElement("div");
 
     pageDiv.id = id;
@@ -76,21 +78,10 @@ function buildContentDiv() {
       pageDiv.style["background-color"] = "#ffffff";
     }
 
-    pageDiv.onclick = () => chrome.runtime.sendMessage({ action: "userSelectedPage", payload: { id, divId: "selectionInjectorDiv"  } });
+    pageDiv.onclick = () => chrome.runtime.sendMessage({ action: "userSelectedPage", payload: { id, divId: "selectionInjectorDiv" } });
 
     contentDiv.appendChild(pageDiv);
   });
 
   return contentDiv;
-}
-
-function mockedCollectPages() {
-  const mockedResultsCount = 10;
-  let mockedArray = [];
-
-  for (let i = 0; i <= mockedResultsCount; i += 1) {
-    mockedArray.push({ id: i, label: `Page ${i}` });
-  }
-
-  return mockedArray;
 }

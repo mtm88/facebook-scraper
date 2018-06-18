@@ -20,7 +20,6 @@ function constructOptions() {
   });
 
   chrome.storage.sync.get(['userLogin', 'userPassword'], ({ userLogin, userPassword }) => {
-    debugger;
     if (userLogin) {
       const userLoginInput = document.getElementById("userLogin");
       userLoginInput.value = userLogin;

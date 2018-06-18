@@ -15,11 +15,16 @@ chrome.runtime.onInstalled.addListener(function () {
 chrome.runtime.onMessage.addListener(function ({ action, payload }, sender, sendResponse) {
   switch (action) {
     case "injectSelector": {
-      return chrome.storage.sync.get(["isAuthed", "token"], ({ isAuthed }) => {
-        if (isAuthed) {
-          return scriptRunner("injectSelector");
+      return chrome.storage.sync.get(["isAuthed", "token", "pages"], ({ isAuthed, token, pages }) => {
+        if (!isAuthed || !token) {
+          return scriptRunner("authenticateUser");
         }
-        return scriptRunner("authenticateUser");
+
+        if (!pages) {
+          return scriptRunner("loadPages");
+        }
+
+        return scriptRunner("injectSelector", { pages });
       })
     }
     case "removeInjection": {
@@ -46,6 +51,7 @@ function scriptRunner(fileName, opts = {}) {
       return chrome.tabs.executeScript(id, {
         code: `opts = ${JSON.stringify({
           currentURL: url,
+          ...opts,
         })}`,
       }, () => chrome.tabs.executeScript(id, { file: `./src/js/scripts/${fileName}.js` }));
     }
