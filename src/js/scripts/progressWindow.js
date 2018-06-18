@@ -1,10 +1,9 @@
 (() => {
-  const div = document.createElement("div");
-
   const currentElementBodyWidth = document.body.clientWidth;
   const calculatedDivWidth = currentElementBodyWidth * 0.7;
   const calculatedDivLeft = (currentElementBodyWidth / 2) - (calculatedDivWidth / 2);
-
+  
+  const div = document.createElement("div");
   div.id = "progressWindowDiv";
   div.style.cssText = `display: flex; flex-direction: column; width: ${calculatedDivWidth}px; position: fixed; top: 100px; left: ${calculatedDivLeft}px; z-index: 1000; background-color: #ffffff`;
   document.body.appendChild(div);
