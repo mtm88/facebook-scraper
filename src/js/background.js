@@ -14,6 +14,14 @@ chrome.runtime.onInstalled.addListener(function () {
 
 chrome.runtime.onMessage.addListener(function ({ action, payload }, sender, sendResponse) {
   switch (action) {
+    case "injectSelector": {
+      return chrome.storage.sync.get(["isAuthed", "token"], ({ isAuthed }) => {
+        if (isAuthed) {
+          return scriptRunner("injectSelector");
+        }
+        return scriptRunner("authenticateUser");
+      })
+    }
     case "removeInjection": {
       return chrome.storage.local.set({ injectionToRemove: payload ? payload.id : null }, () => {
         return scriptRunner("removeInjection");
@@ -28,8 +36,7 @@ chrome.runtime.onMessage.addListener(function ({ action, payload }, sender, send
     }
     default: break;
   }
-}
-);
+});
 
 function scriptRunner(fileName, opts = {}) {
   return chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {

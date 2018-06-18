@@ -4,8 +4,11 @@
   "description": "Chrome plugin to scrape Facebook public posts",
   "permissions": [
     "activeTab",
+    "tabs",
     "declarativeContent",
-    "storage"
+    "storage",
+    "http://*.ondemand.crisp/service.svc/json/session/*",
+    "https://*.ondemand.crisp/service.svc/json/session/*"
   ],
   "background": {
     "scripts": [
