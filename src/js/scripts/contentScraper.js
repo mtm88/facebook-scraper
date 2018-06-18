@@ -6,7 +6,7 @@
   if there's a message awaiting the array will have 1 more element */
 	const correctModalIndex = scrollableArea.length > 1 ? 1 : 0;
 
-	const contentPosts = fetchContentPosts(userSeesModal);
+	fetchContentPosts(userSeesModal);
 
 	function parseContentPosts(divsWithPost) {
 		const fieldsToMap = ["title", "author", "timeAdded", "link", "contentId", "comments", "shares", "reactions"];
