@@ -1,15 +1,33 @@
 function constructOptions() {
   const recordsCountInputValue = document.getElementById("recordsToPullCount");
-  const recordsCountApplyButton = document.getElementById("applyButton");
-  recordsCountApplyButton.onmouseover = () => recordsCountApplyButton.style.cursor = "pointer";
+  const optionsApplyButton = document.getElementById("applyButton");
+  optionsApplyButton.onmouseover = () => optionsApplyButton.style.cursor = "pointer";
 
-  recordsCountApplyButton.addEventListener('click', updateRecordsToPullCount);
+  optionsApplyButton.addEventListener('click', () => {
+    return Promise.all([
+      updateRecordsToPullCount(),
+      updateLoginPassword(),
+    ]).then((results) => alert('Settings Updated!'))
+      .catch(error => alert(error));
+  });
 
   chrome.storage.local.get(['recordsToPullCount'], (results) => {
     if (!Object.keys(results).length) {
       chrome.storage.local.set({ recordsToPullCount: 50 });
     } else {
       recordsCountInputValue.value = results.recordsToPullCount;
+    }
+  });
+
+  chrome.storage.sync.get(['userLogin', 'userPassword'], ({ user, password }) => {
+    if (user) {
+      const userInput = document.getElementById("userLogin");
+      userInput.value = user;
+    }
+
+    if (password) {
+      const userPassword = document.getElementById("userPassword");
+      userPassword.value = password;
     }
   });
 }
@@ -24,8 +42,22 @@ function updateRecordsToPullCount() {
   if (valueIsNumber) {
     return chrome.storage.local.set({
       recordsToPullCount: updatedValue,
-    }, () => alert('Settings Updated!'));
+    });
   }
 
-  return alert("Incorrect field value");
+  return Promise.reject("Incorrect field value");
+}
+
+function updateLoginPassword() {
+  const userInput = document.getElementById("userLogin");
+  const userPassword = document.getElementById("userPassword");
+
+  if (userLogin && userLogin.value && userPassword && userPassword.value) {
+    return chrome.storage.sync.set({
+      userLogin: userInput.value,
+      userPassword: userPassword.value,
+    });
+  } else {
+    return Promise.reject("Username or Password are missing");
+  }
 }
