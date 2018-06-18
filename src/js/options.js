@@ -19,15 +19,16 @@ function constructOptions() {
     }
   });
 
-  chrome.storage.sync.get(['userLogin', 'userPassword'], ({ user, password }) => {
-    if (user) {
-      const userInput = document.getElementById("userLogin");
-      userInput.value = user;
+  chrome.storage.sync.get(['userLogin', 'userPassword'], ({ userLogin, userPassword }) => {
+    debugger;
+    if (userLogin) {
+      const userLoginInput = document.getElementById("userLogin");
+      userLoginInput.value = userLogin;
     }
 
-    if (password) {
-      const userPassword = document.getElementById("userPassword");
-      userPassword.value = password;
+    if (userPassword) {
+      const userPasswordInput = document.getElementById("userPassword");
+      userPasswordInput.value = userPassword;
     }
   });
 }
