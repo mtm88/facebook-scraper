@@ -43,7 +43,6 @@
             headerWrapperDiv.appendChild(loadedSoFar);
           }
           loadedSoFar.textContent = textContent;
-
           break;
         }
         case "parsedPosts": {

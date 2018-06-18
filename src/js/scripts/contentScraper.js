@@ -1,4 +1,4 @@
-(function () {
+(() => {
   const scrollableArea = document.getElementsByClassName("uiScrollableAreaWrap scrollable");
   const userSeesModal = !!scrollableArea.length;
 

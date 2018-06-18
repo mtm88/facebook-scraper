@@ -1,4 +1,4 @@
-(function () {
+(() => {
   const scrollableArea = document.getElementsByClassName("uiScrollableAreaWrap scrollable");
   const existingSelectionDiv = document.getElementById("selectionInjectorDiv");
   const userSeesModal = !!scrollableArea.length;

@@ -12,50 +12,29 @@ chrome.runtime.onInstalled.addListener(function () {
   });
 });
 
-chrome.runtime.onMessage.addListener(
-  ({ action, payload }, sender, sendResponse) => {
-    switch (action) {
-      case "closeSelector": {
-        return closeSelector();
-      }
-      case "removeInjection": {
-        return chrome.storage.local.set({ injectionToRemove: payload ? payload.id : null }, () => {
-          return removeInjection();
-        });
-      }
-      case "userSelectedPage": {
-        return chrome.storage.local.set({ selectedPageId: payload.id, injectionToRemove: payload.divId }, () => {
-          removeInjection();
-          injectProgressWindow();
-          return startScraper();
-        });
-      }
-      default: break;
+chrome.runtime.onMessage.addListener(function ({ action, payload }, sender, sendResponse) {
+  switch (action) {
+    case "removeInjection": {
+      return chrome.storage.local.set({ injectionToRemove: payload ? payload.id : null }, () => {
+        return executeScript("removeInjection");
+      });
     }
+    case "userSelectedPage": {
+      return chrome.storage.local.set({ selectedPageId: payload.id, injectionToRemove: payload.divId }, () => {
+        executeScript("removeInjection");
+        executeScript("progressWindow");
+        return executeScript("contentScraper");
+      });
+    }
+    default: break;
   }
+}
 );
 
-// Tab is selected more than once, extract it?
-function removeInjection() {
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+function executeScript(fileName) {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (tabs && tabs.length) {
-      chrome.tabs.executeScript(tabs[0].id, { file: "./src/js/scripts/removeInjection.js" });
-    }
-  });
-}
-
-function startScraper() {
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    if (tabs && tabs.length) {
-      chrome.tabs.executeScript(tabs[0].id, { file: "./src/js/scripts/contentScraper.js" });
-    }
-  });
-}
-
-function injectProgressWindow() {
-  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    if (tabs && tabs.length) {
-      chrome.tabs.executeScript(tabs[0].id, { file: "./src/js/scripts/progressWindow.js" });
+      chrome.tabs.executeScript(tabs[0].id, { file: `./src/js/scripts/${fileName}.js` });
     }
   });
 }
