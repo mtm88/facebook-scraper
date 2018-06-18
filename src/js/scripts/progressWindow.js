@@ -19,7 +19,7 @@
 
   const headerWrapperDiv = document.createElement("div");
   headerWrapperDiv.id = "headerWrapperDiv";
-  headerWrapperDiv.style.cssText = "flex: 1; background-color: #ffffff; border: 1px solid;";
+  headerWrapperDiv.style.cssText = "flex: 1; background-color: #ffffff; border: 1px solid rgb(0, 0, 0, 0.35);";
   div.appendChild(headerWrapperDiv);
 
   const progressSummary = document.createElement("p");

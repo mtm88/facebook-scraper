@@ -3,8 +3,12 @@
   const existingSelectionDiv = document.getElementById("selectionInjectorDiv");
   const userSeesModal = !!scrollableArea.length;
 
+  /* facebook messenger overlay uses the same scrollableArea classes,
+  if there's a message awaiting the array will have 1 more element */
+  const correctModalIndex = scrollableArea.length > 1 ? 1 : 0;
+
   if (!existingSelectionDiv) {
-    const div = buildInjectionDiv(scrollableArea, userSeesModal);
+    const div = buildInjectionDiv(scrollableArea, userSeesModal, correctModalIndex);
     div.appendChild(buildCloseButtonDiv());
     div.appendChild(buildMessageParagraph());
 
@@ -13,16 +17,16 @@
     }
 
     if (userSeesModal) {
-      return scrollableArea[0].appendChild(div);
+      return scrollableArea[correctModalIndex].appendChild(div);
     }
     return document.body.appendChild(div);
   }
 })();
 
-function buildInjectionDiv(scrollableArea, userSeesModal) {
+function buildInjectionDiv(scrollableArea, userSeesModal, correctModalIndex) {
   const div = document.createElement("div");
 
-  const currentElementBodyWidth = userSeesModal ? scrollableArea[0].clientWidth : document.body.clientWidth;
+  const currentElementBodyWidth = userSeesModal ? scrollableArea[correctModalIndex].clientWidth : document.body.clientWidth;
   const calculatedDivLeft = userSeesModal ? ((document.body.clientWidth - currentElementBodyWidth) / 2) + (currentElementBodyWidth / 2 - 250) : (currentElementBodyWidth / 2) - 250;
   const calculatedDivWidth = (currentElementBodyWidth * (userSeesModal ? 0.6 : 0.3));
 

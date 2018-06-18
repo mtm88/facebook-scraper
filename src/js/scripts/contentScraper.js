@@ -2,6 +2,10 @@
   const scrollableArea = document.getElementsByClassName("uiScrollableAreaWrap scrollable");
   const userSeesModal = !!scrollableArea.length;
 
+  /* facebook messenger overlay uses the same scrollableArea classes,
+  if there's a message awaiting the array will have 1 more element */
+  const correctModalIndex = scrollableArea.length > 1 ? 1 : 0;
+
   const contentPosts = fetchContentPosts(userSeesModal);
 
   function parseContentPosts(divsWithPost) {
@@ -74,7 +78,7 @@
 
     if (userSeesModal) {
       const scrollableArea = document.getElementsByClassName("uiScrollableAreaWrap scrollable");
-      divsWithPost = scrollableArea[0].getElementsByClassName("userContentWrapper") || [];
+      divsWithPost = scrollableArea[correctModalIndex].getElementsByClassName("userContentWrapper") || [];
     }
 
     chrome.storage.local.set({ divsWithPost, divsWithPostLength: divsWithPost.length });
@@ -98,7 +102,7 @@
 
   function scrollDown(userSeesModal, scrollableArea, scrollCounter) {
     if (userSeesModal) {
-      scrollableArea[0].scrollTop = scrollableArea[0].scrollHeight;
+      scrollableArea[correctModalIndex].scrollTop = scrollableArea[correctModalIndex].scrollHeight;
 
       setTimeout(() => {
         scrollCounter++;
