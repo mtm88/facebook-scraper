@@ -56,6 +56,8 @@ function updateLoginPassword() {
 		return chrome.storage.sync.set({
 			userLogin: userInput.value,
 			userPassword: userPassword.value,
+			token: null,
+			isAuthed: false,
 		});
 	} else {
 		return Promise.reject("Username or Password are missing");
