@@ -1,15 +1,15 @@
 (() => {
-  chrome.storage.local.get(["injectionToRemove"], (results) => {
-    if (results.injectionToRemove) {
-      const injectedElement = document.getElementById(results.injectionToRemove);
+	chrome.storage.local.get(["injectionToRemove"], (results) => {
+		if (results.injectionToRemove) {
+			const injectedElement = document.getElementById(results.injectionToRemove);
 
-      if (injectedElement) {
-        injectedElement.outerHTML = "";
-      }
-    }
+			if (injectedElement) {
+				injectedElement.outerHTML = "";
+			}
+		}
 
-    chrome.storage.local.set({
-      injectionToRemove: null,
-    });
-  });
+		chrome.storage.local.set({
+			injectionToRemove: null,
+		});
+	});
 })();

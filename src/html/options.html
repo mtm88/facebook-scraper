@@ -2,101 +2,101 @@
 <html>
 
 <head>
-  <style>
-    body {
-      padding: 20px 40px;
-    }
+	<style>
+		body {
+			padding: 20px 40px;
+		}
 
-    #optionsWrapper {
-      border: solid 1px;
-      padding: 10px 20px 20px;
-      width: 350px;
-    }
+		#optionsWrapper {
+			border: solid 1px;
+			padding: 10px 20px 20px;
+			width: 350px;
+		}
 
-    #optionsList {
-      list-style: none;
-      margin: 0px;
-      padding: 10px 10px;
-    }
+		#optionsList {
+			list-style: none;
+			margin: 0px;
+			padding: 10px 10px;
+		}
 
-    #applyButtonWrapper {
-      display: flex;
-      flex-direction: row-reverse;
-    }
+		#applyButtonWrapper {
+			display: flex;
+			flex-direction: row-reverse;
+		}
 
-    #applyButton {
-      background-color: rgb(0, 0, 0, 0.75);
-      color: white;
-      padding: 5px 10px;
-    }
+		#applyButton {
+			background-color: rgb(0, 0, 0, 0.75);
+			color: white;
+			padding: 5px 10px;
+		}
 
-    .label {
-      font-size: 15px;
-      font-weight: 600;
-    }
+		.label {
+			font-size: 15px;
+			font-weight: 600;
+		}
 
-    .optionBlock {
-      display: flex;
-      margin: 0px 0px 20px;
-    }
+		.optionBlock {
+			display: flex;
+			margin: 0px 0px 20px;
+		}
 
-    .optionLabel {
-      flex: 1;
-      padding: 7px 5px 0px;
-    }
+		.optionLabel {
+			flex: 1;
+			padding: 7px 5px 0px;
+		}
 
-    .optionField {
-      flex: 1;
-      padding: 5px;
-    }
+		.optionField {
+			flex: 1;
+			padding: 5px;
+		}
 
-    .optionInputStyle {
-      padding: 2px 2px 0px;
-    }
-  </style>
+		.optionInputStyle {
+			padding: 2px 2px 0px;
+		}
+	</style>
 </head>
 
 <body>
-  <div id="optionsWrapper">
-    <p class="label">Options:</p>
+	<div id="optionsWrapper">
+		<p class="label">Options:</p>
 
-    <ul id="optionsList">
-      <li>
-        <div class="optionBlock">
-          <div class="optionLabel">
-            Login:
-          </div>
-          <div class="optionField">
-            <input id="userLogin" class="optionInputStyle" type="text" />
-          </div>
-        </div>
-      </li>
-      <li>
-        <div class="optionBlock">
-          <div class="optionLabel">
-            Password:
-          </div>
-          <div class="optionField">
-            <input id="userPassword" class="optionInputStyle" type="password"  />
-          </div>
-        </div>
-      </li>
-      <li>
-        <div class="optionBlock">
-          <div class="optionLabel">
-            Number of posts to scrape:
-          </div>
-          <div class="optionField">
-            <input id="recordsToPullCount" class="optionInputStyle" type="text" value=50 />
-          </div>
-        </div>
-      </li>
-    </ul>
+		<ul id="optionsList">
+			<li>
+				<div class="optionBlock">
+					<div class="optionLabel">
+						Login:
+					</div>
+					<div class="optionField">
+						<input id="userLogin" class="optionInputStyle" type="text" />
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="optionBlock">
+					<div class="optionLabel">
+						Password:
+					</div>
+					<div class="optionField">
+						<input id="userPassword" class="optionInputStyle" type="password" />
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="optionBlock">
+					<div class="optionLabel">
+						Number of posts to scrape:
+					</div>
+					<div class="optionField">
+						<input id="recordsToPullCount" class="optionInputStyle" type="text" value=50 />
+					</div>
+				</div>
+			</li>
+		</ul>
 
-    <div id="applyButtonWrapper">
-      <div id="applyButton">APPLY</div>
-    </div>
-  </div>
+		<div id="applyButtonWrapper">
+			<div id="applyButton">APPLY</div>
+		</div>
+	</div>
 
 </body>
 <script src="./../js/options.js"></script>
