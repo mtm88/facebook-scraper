@@ -1,4 +1,5 @@
-(() => {
+
+function displayProgressWindow() {
 	const currentElementBodyWidth = document.body.clientWidth;
 	const calculatedDivWidth = currentElementBodyWidth * 0.7;
 	const calculatedDivLeft = (currentElementBodyWidth / 2) - (calculatedDivWidth / 2);
@@ -96,4 +97,6 @@
 			}
 		}
 	});
-})();
+}
+
+displayProgressWindow();

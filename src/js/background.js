@@ -35,9 +35,11 @@ chrome.runtime.onMessage.addListener(function ({ action, payload }) {
 	case "userSelectedPage": {
 		return chrome.storage.local.set({ selectedPageId: payload.id, injectionToRemove: payload.divId }, () => {
 			scriptRunner("removeInjection");
-			scriptRunner("progressWindow");
 			return scriptRunner("contentScraper");
 		});
+	}
+	case "displayProgressWindow": {
+		return scriptRunner("progressWindow");
 	}
 	default: break;
 	}

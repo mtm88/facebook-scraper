@@ -1,4 +1,4 @@
-(() => {
+function loadPages() {
 	const xhr = new XMLHttpRequest();
 
 	return chrome.storage.sync.get(["isAuthed", "token"], ({ isAuthed, token }) => {
@@ -40,4 +40,6 @@
 
 		return mockedArray;
 	}
-})();
+}
+
+loadPages();

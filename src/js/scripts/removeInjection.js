@@ -1,4 +1,4 @@
-(() => {
+function removeInjection() {
 	chrome.storage.local.get(["injectionToRemove"], (results) => {
 		if (results.injectionToRemove) {
 			const injectedElement = document.getElementById(results.injectionToRemove);
@@ -12,4 +12,6 @@
 			injectionToRemove: null,
 		});
 	});
-})();
+}
+
+removeInjection();

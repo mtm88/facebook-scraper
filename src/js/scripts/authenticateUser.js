@@ -1,4 +1,4 @@
-(() => {
+function authenticateUser() {
 	displayAuthenticatingWindow();
 
 	const xhr = new XMLHttpRequest();
@@ -56,4 +56,6 @@
 	function hideAuthenticationWindow() {
 		chrome.runtime.sendMessage({ action: "removeInjection", payload: { id: "authenticatingWindowDiv" } });
 	}
-})();
+}
+
+authenticateUser();
