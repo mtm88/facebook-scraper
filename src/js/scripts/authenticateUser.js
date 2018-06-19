@@ -7,6 +7,7 @@
 		if (!userLogin || !userPassword) {
 			const errorMessage = "Please insert your Login & Password in the plugin options";
 			alert(errorMessage);
+			hideAuthenticationWindow();
 			throw new Error(errorMessage);
 		}
 
