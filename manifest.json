@@ -11,9 +11,7 @@
     "https://*.ondemand.crisp/service.svc/json/session/*"
   ],
   "background": {
-    "scripts": [
-      "./src/js/background.js"
-    ],
+    "page": "./src/html/background.html",
     "persistent": false
   },
   "page_action": {

@@ -1,3 +1,5 @@
+import { parseContentPosts, parsedSearchURL } from "./helpers.js";
+
 chrome.runtime.onInstalled.addListener(function () {
 	chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
 		chrome.declarativeContent.onPageChanged.addRules([{
@@ -54,7 +56,8 @@ function scriptRunner(fileName, opts = {}) {
 				code: `opts = ${JSON.stringify({
 					currentURL: url,
 					...opts,
-				})}`,
+				})};
+				helpers = { parseContentPosts: ${parseContentPosts}, parsedSearchURL: ${parsedSearchURL}}`,
 			}, () => chrome.tabs.executeScript(id, { file: `./src/js/scripts/${fileName}.js` }));
 		}
 		return alert("Sorry, it looks like you have no tabs opened in your browser! :-(");

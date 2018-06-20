@@ -24,7 +24,7 @@ function displayProgressWindow() {
 	div.appendChild(headerWrapperDiv);
 
 	const progressSummary = document.createElement("p");
-	progressSummary.textContent = "Progress summary:";
+	progressSummary.textContent = "Progress summary";
 	progressSummary.style.cssText = "padding: 10px 20px; font-weight: 800; font-size: 14px;";
 	headerWrapperDiv.appendChild(progressSummary);
 
