@@ -18,14 +18,15 @@ function authenticateUser() {
 
 	function updateReqStatus({ readyState, status, responseText }) {
 		if (readyState === 4 && status === 200) {
+			hideAuthenticationWindow();
 			const { Token } = JSON.parse(responseText);
 			return chrome.storage.sync.set({ isAuthed: true, token: Token }, () => chrome.runtime.sendMessage({ action: "injectSelector" }));
 		} else if (readyState === 4) {
+			hideAuthenticationWindow();
 			const errorMessage = "Sorry, incorrect login details";
 			alert(errorMessage);
 			throw new Error(errorMessage);
 		}
-		hideAuthenticationWindow();
 	}
 
 	function displayAuthenticatingWindow() {

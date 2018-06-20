@@ -67,7 +67,7 @@ function buildContentDiv() {
 	contentDiv.id = "contentDiv";
 	contentDiv.style.cssText = "display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start; margin: 0px 5px 30px;";
 
-	opts.pages.forEach(({ id }) => {
+	opts.pages.forEach(({ id, recordsToPull = 50 }) => {
 		const pageDiv = document.createElement("div");
 
 		pageDiv.id = id;
@@ -83,7 +83,7 @@ function buildContentDiv() {
 			pageDiv.style["background-color"] = "#ffffff";
 		};
 
-		pageDiv.onclick = () => chrome.runtime.sendMessage({ action: "userSelectedPage", payload: { id, divId: "selectionInjectorDiv" } });
+		pageDiv.onclick = () => chrome.runtime.sendMessage({ action: "userSelectedPage", payload: { id, recordsToPull, divId: "selectionInjectorDiv" } });
 
 		contentDiv.appendChild(pageDiv);
 	});

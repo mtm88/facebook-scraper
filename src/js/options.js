@@ -1,23 +1,23 @@
 function constructOptions() {
-	const recordsCountInputValue = document.getElementById("recordsToPullCount");
+	// const recordsCountInputValue = document.getElementById("recordsToPull");
 	const optionsApplyButton = document.getElementById("applyButton");
 	optionsApplyButton.onmouseover = () => optionsApplyButton.style.cursor = "pointer";
 
 	optionsApplyButton.addEventListener("click", () => {
 		return Promise.all([
-			updateRecordsToPullCount(),
+			// updateRecordsToPull(),
 			updateLoginPassword(),
 		]).then(() => alert("Settings Updated!"))
 			.catch(error => alert(error));
 	});
 
-	chrome.storage.local.get(["recordsToPullCount"], (results) => {
-		if (!Object.keys(results).length) {
-			chrome.storage.local.set({ recordsToPullCount: 50 });
-		} else {
-			recordsCountInputValue.value = results.recordsToPullCount;
-		}
-	});
+	// chrome.storage.local.get(["recordsToPull"], (results) => {
+	// 	if (!Object.keys(results).length) {
+	// 		chrome.storage.local.set({ recordsToPull: 50 });
+	// 	} else {
+	// 		recordsCountInputValue.value = results.recordsToPull;
+	// 	}
+	// });
 
 	chrome.storage.sync.get(["userLogin", "userPassword"], ({ userLogin, userPassword }) => {
 		if (userLogin) {
@@ -34,19 +34,20 @@ function constructOptions() {
 
 constructOptions();
 
-function updateRecordsToPullCount() {
-	const recordsCountInputValue = document.getElementById("recordsToPullCount");
-	const updatedValue = recordsCountInputValue.value;
-	const valueIsNumber = !isNaN(updatedValue);
+// uncomment to enable setting the amount of records to pull in options
+// function updateRecordsToPull() {
+// 	const recordsCountInputValue = document.getElementById("recordsToPullCount");
+// 	const updatedValue = recordsCountInputValue.value;
+// 	const valueIsNumber = !isNaN(updatedValue);
 
-	if (valueIsNumber) {
-		return chrome.storage.local.set({
-			recordsToPullCount: updatedValue,
-		});
-	}
+// 	if (valueIsNumber) {
+// 		return chrome.storage.local.set({
+// 			recordsToPullCount: updatedValue,
+// 		});
+// 	}
 
-	return Promise.reject("Incorrect field value");
-}
+// 	return Promise.reject("Incorrect field value");
+// }
 
 function updateLoginPassword() {
 	const userInput = document.getElementById("userLogin");

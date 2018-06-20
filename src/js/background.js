@@ -35,7 +35,11 @@ chrome.runtime.onMessage.addListener(function ({ action, payload }) {
 		});
 	}
 	case "userSelectedPage": {
-		return chrome.storage.local.set({ selectedPageId: payload.id, injectionToRemove: payload.divId }, () => {
+		return chrome.storage.local.set({
+			selectedPageId: payload.id,
+			injectionToRemove: payload.divId,
+			recordsToPull: payload.recordsToPull,
+		}, () => {
 			scriptRunner("removeInjection");
 			return scriptRunner("contentScraper");
 		});

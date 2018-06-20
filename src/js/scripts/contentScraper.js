@@ -22,11 +22,11 @@ function fetchContentPosts(userSeesModal, scrollCounter = 0, correctModalIndex) 
 
 	chrome.storage.local.set({ divsWithPost, divsWithPostLength: divsWithPost.length });
 
-	chrome.storage.local.get(["recordsToPullCount"], (results) => {
-		if (divsWithPost.length >= results.recordsToPullCount) {
+	chrome.storage.local.get(["recordsToPull"], ({ recordsToPull = 50 }) => {
+		if (divsWithPost.length >= recordsToPull) {
 			// slice the array if we've pulled more than we require
-			if (divsWithPost.length > results.recordsToPullCount) {
-				divsWithPost = Array.from(divsWithPost).slice(0, results.recordsToPullCount);
+			if (divsWithPost.length > recordsToPull) {
+				divsWithPost = Array.from(divsWithPost).slice(0, recordsToPull);
 			}
 
 			return helpers.parseContentPosts(divsWithPost);
