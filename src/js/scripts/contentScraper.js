@@ -1,25 +1,25 @@
 function contentScraper() {
-	const scrollableArea = document.getElementsByClassName("uiScrollableAreaWrap scrollable");
-	const userSeesModal = !!scrollableArea.length;
-
 	/* facebook messenger overlay uses the same scrollableArea classes,
   if there's a message awaiting the array will have 1 more element */
-	const correctModalIndex = scrollableArea.length > 1 ? 1 : 0;
+	const { userSeesModal, correctModalIndex } = userSeesPublicPostsModal();
+	let parentElement;
+
+	chrome.runtime.sendMessage({ action: "displayProgressWindow" });
 
 	if (userSeesModal) {
-		chrome.runtime.sendMessage({ action: "displayProgressWindow" });
-		return fetchContentPosts(userSeesModal, 0, correctModalIndex);
+		parentElement = document.getElementsByClassName("uiScrollableAreaWrap scrollable")[correctModalIndex];
+	} else if (userSeesPublicStories()) {
+		parentElement = document.getElementById("browse_result_area");
 	} else {
 		return alert("Please open Public Posts before proceeding");
 	}
+	return fetchContentPosts(parentElement, 0, userSeesModal);
 }
 
 contentScraper();
 
-function fetchContentPosts(userSeesModal, scrollCounter = 0, correctModalIndex) {
-	const scrollableArea = document.getElementsByClassName("uiScrollableAreaWrap scrollable");
-	divsWithPost = scrollableArea[correctModalIndex].getElementsByClassName("userContentWrapper") || [];
-
+function fetchContentPosts(parentElement, scrollCounter = 0, userSeesModal) {
+	divsWithPost = parentElement.getElementsByClassName("userContentWrapper") || [];
 	chrome.storage.local.set({ divsWithPost, divsWithPostLength: divsWithPost.length });
 
 	chrome.storage.local.get(["recordsToPull"], ({ recordsToPull = 50 }) => {
@@ -36,17 +36,37 @@ function fetchContentPosts(userSeesModal, scrollCounter = 0, correctModalIndex) 
 			return alert("There seems to be a problem with fetching the requested number of posts. Please try again.");
 		}
 
-		scrollDown(userSeesModal, scrollableArea, scrollCounter, correctModalIndex);
+		scrollDown(parentElement, scrollCounter, userSeesModal);
 	});
 }
 
-function scrollDown(userSeesModal, scrollableArea, scrollCounter, correctModalIndex) {
+function scrollDown(parentElement, scrollCounter, userSeesModal) {
 	if (userSeesModal) {
-		scrollableArea[correctModalIndex].scrollTop = scrollableArea[correctModalIndex].scrollHeight;
-
-		setTimeout(() => {
-			scrollCounter++;
-			fetchContentPosts(userSeesModal, scrollCounter, correctModalIndex);
-		}, 3000);
+		parentElement.scrollTop = parentElement.scrollHeight;
+	} else {
+		window.scrollTo({ top: parentElement.scrollHeight });
 	}
+
+	setTimeout(() => {
+		scrollCounter++;
+		fetchContentPosts(parentElement, scrollCounter, userSeesModal);
+	}, 3000);
+}
+
+function userSeesPublicPostsModal() {
+	const scrollableArea = document.getElementsByClassName("uiScrollableAreaWrap scrollable");
+	const userSeesModal = !!scrollableArea.length;
+	const correctModalIndex = scrollableArea.length > 1 ? 1 : 0;
+
+	return { userSeesModal, correctModalIndex };
+}
+
+function userSeesPublicStories() {
+	if (opts && opts.currentURL) {
+		const definedUrlElements = ["search/str", "stories-keyword", "stories-public"];
+
+		const userOnPublicStories = (definedUrlElements.filter(el => opts.currentURL.indexOf(el) > -1)).length === definedUrlElements.length;
+		return userOnPublicStories;
+	}
+	return false;
 }
