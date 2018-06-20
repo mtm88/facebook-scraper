@@ -90,6 +90,9 @@ function displayProgressWindow() {
 				submitButton.id = "submitButton";
 				submitButton.style.cssText = "padding: 10px 20px; margin-left: 20px; margin-bottom: 20px; border-radius: 5px; width: 80px; text-align: center; font-size: 14px; background-color: #6699ff";
 				submitButton.textContent = "Submit";
+				submitButton.onmouseover = () => closeDiv.style.cursor = "pointer";
+				submitButton.onclick = () => chrome.runtime.sendMessage({ action: "publishPosts" });
+
 				headerWrapperDiv.appendChild(submitButton);
 				break;
 			}

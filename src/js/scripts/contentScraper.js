@@ -4,8 +4,7 @@ function contentScraper() {
 	const { userSeesModal, correctModalIndex } = helpers.userSeesPublicPostsModal();
 	let parentElement;
 
-	chrome.runtime.sendMessage({ action: "displayProgressWindow" });
-
+	
 	if (userSeesModal) {
 		parentElement = document.getElementsByClassName("uiScrollableAreaWrap scrollable")[correctModalIndex];
 	} else if (helpers.userSeesPublicStories()) {
@@ -13,6 +12,7 @@ function contentScraper() {
 	} else {
 		return alert("Please open Public Posts before proceeding");
 	}
+	chrome.runtime.sendMessage({ action: "displayProgressWindow" });
 	return fetchContentPosts(parentElement, 0, userSeesModal);
 }
 

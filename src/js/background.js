@@ -52,6 +52,9 @@ chrome.runtime.onMessage.addListener(function ({ action, payload }) {
 	case "displayProgressWindow": {
 		return scriptRunner("progressWindow");
 	}
+	case "publishPosts": {
+		return scriptRunner("publishPosts");
+	}
 	default: break;
 	}
 });
