@@ -5,7 +5,7 @@ const fs = require("fs");
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
-describe("Content Parsers", () => {
+describe("#parseContentPosts", () => {
 	beforeEach(() => {
 		global.opts = {
 			currentURL: "https://www.facebook.com/search/top/?q=asda",
@@ -19,22 +19,21 @@ describe("Content Parsers", () => {
 		};
 	});
 	it("properly parses raw post to expected format", () => {
-		const rawPost = JSDOM.fragment(fs.readFileSync("./spec/mocks/mockedPost.html", "utf-8"));
+		const rawPost = JSDOM.fragment(fs.readFileSync("./test/mocks/raw_post_mock.html", "utf-8"));
 		const parsedPosts = parseContentPosts.apply({ parsedSearchURL }, [[rawPost]]);
 
 		expect(parsedPosts).to.be.an("array");
 		expect(parsedPosts).to.have.length(1);
 
 		const selectedPost = parsedPosts[0];
-		expect(selectedPost).to.have.property("author", "OK! Magazine UK");
-		expect(selectedPost).to.have.property("comments", 306);
-		expect(selectedPost).to.have.property("contentId", "1814004135313857");
-		expect(selectedPost).to.have.property("link", "https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.ok.co.uk%2Flifestyle%2Fmum-and-baby%2F1398853%2Fasda-george-baby-sale-pushchairs-cribs-car-seats-reduced-half-price&h=AT1W4ZaV4JQWS5o7hfIZr-Nf-O-vbA2yiJnY4uzxgvZLqCN_kfoSbjqJ9l55_-WLZtNjEKJ0a0mQVxugFCIeV1KztkVuZWf1vwfRpFvopBl0y1I64BhB45EdFXL1ZMdXLzVoRSo2i_6kquvfTLPmNr6a");
-		expect(selectedPost).to.have.property("reactions", 47);
+		expect(selectedPost.author.replace(/(\r\n\t|\n|\r\t)/gm, "").trim()).to.eq("ITV News");
+		expect(selectedPost).to.have.property("comments", 889);
+		expect(selectedPost).to.have.property("contentId", "10155949582962672");
+		expect(selectedPost).to.have.property("link", null);
+		expect(selectedPost).to.have.property("reactions", 393);
 		expect(selectedPost).to.have.property("searchURL", "https://www.facebook.com/search/top/");
-		expect(selectedPost).to.have.property("shares", 49);
-		expect(selectedPost).to.have.property("timeAdded", "19/06/2018 12:00");
-		expect(selectedPost.title.replace(/(\r\n\t|\n|\r\t)/gm,"").trim()).to.eq("Asda				 have announced a VERY impressive baby and toddler discount - see what's up for grabs");
-
+		expect(selectedPost).to.have.property("shares", 283);
+		expect(selectedPost).to.have.property("timeAdded", "20/06/2018 09:30");
+		expect(selectedPost.title.replace(/(\r\n\t|\n|\r\t)/gm,"").trim()).to.eq("The bosses of				ASDA and Sainsbury's are questioned by MPs on their proposed merger");
 	});
 });
