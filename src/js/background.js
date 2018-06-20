@@ -4,6 +4,7 @@ import {
 	userSeesPublicStories,
 	userSeesPublicPostsModal,
 } from "./helpers.js";
+import { APIconfig } from "./config.js";
 
 chrome.runtime.onInstalled.addListener(function () {
 	chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
@@ -67,6 +68,7 @@ function scriptRunner(fileName, opts = {}) {
 			return chrome.tabs.executeScript(id, {
 				code: `opts = ${JSON.stringify({
 					currentURL: url,
+					config: { APIconfig },
 					...opts,
 				})};
 				helpers = {

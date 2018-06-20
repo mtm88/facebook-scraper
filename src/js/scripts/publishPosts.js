@@ -3,10 +3,10 @@ function publishPosts() {
 		if (parsedPosts && JSON.parse(parsedPosts).length) {
 			const xhr = new XMLHttpRequest();
 			xhr.onreadystatechange = () => updateReqStatus(xhr);
-			xhr.open("POST", "http://stage.rmf.crispthinking.com/v2/SubmitUGCText", true);
+			xhr.open("POST", config.APIconfig.publishURL, true);
 			// xhr.setRequestHeader("Authorization", `Token ${token}`);
 			xhr.setRequestHeader("Content-Type", "application/json");
-			
+
 			// xhr.send({
 			// 	ApiKey: 123,
 			// 	ContentType: "content type",

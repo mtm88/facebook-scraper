@@ -8,7 +8,7 @@ function loadPages() {
 		}
 
 		xhr.onreadystatechange = () => updateReqStatus(xhr);
-		xhr.open("GET", "http://soc2.app.ondemand.crisp/ui/configuration/api/page?channel=facebook-search", true);
+		xhr.open("GET", config.APIconfig.pagesURL, true);
 		xhr.setRequestHeader("Authorization", `Token ${token}`);
 		xhr.send();
 	});

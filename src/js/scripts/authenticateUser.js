@@ -1,6 +1,5 @@
 function authenticateUser() {
 	displayAuthenticatingWindow();
-
 	const xhr = new XMLHttpRequest();
 
 	return chrome.storage.sync.get(["userLogin", "userPassword"], ({ userLogin, userPassword }) => {
@@ -11,8 +10,12 @@ function authenticateUser() {
 			throw new Error(errorMessage);
 		}
 
+		let url = opts.config.APIconfig.authenticationURL;
+		url = url.replace("<userLogin>", userLogin);
+		url = url.replace("<userPassword>", userPassword);
+
 		xhr.onreadystatechange = () => updateReqStatus(xhr);
-		xhr.open("POST", `http://soc2.app.ondemand.crisp/service.svc/json/session/netmodlogin?username=${userLogin}&password=${userPassword}`, true);
+		xhr.open("POST",url, true);
 		xhr.send();
 	});
 
