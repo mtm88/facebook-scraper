@@ -3,7 +3,11 @@ import {
 	parsedSearchURL,
 	userSeesPublicStories,
 	userSeesPublicPostsModal,
-} from "./helpers.js";
+} from "./helpers/parsingHelpers.js";
+import {
+	displayAuthenticatingWindow,
+	hideAuthenticationWindow,
+} from "./helpers/authenticateUserHelper.js";
 import { APIconfig } from "./config.js";
 
 chrome.runtime.onInstalled.addListener(function () {
@@ -76,6 +80,10 @@ function scriptRunner(fileName, opts = {}) {
 					 parsedSearchURL: ${parsedSearchURL},
 					 userSeesPublicStories: ${userSeesPublicStories},
 					 userSeesPublicPostsModal: ${userSeesPublicPostsModal},
+					};
+					scriptHelpers = {
+						displayAuthenticatingWindow: ${displayAuthenticatingWindow},
+						hideAuthenticationWindow: ${hideAuthenticationWindow},
 					}`,
 			}, () => chrome.tabs.executeScript(id, { file: `./src/js/scripts/${fileName}.js` }));
 		}

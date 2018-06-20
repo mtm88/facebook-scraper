@@ -8,7 +8,7 @@ function loadPages() {
 		}
 
 		xhr.onreadystatechange = () => updateReqStatus(xhr);
-		xhr.open("GET", config.APIconfig.pagesURL, true);
+		xhr.open("GET", opts.config.APIconfig.pagesURL, true);
 		xhr.setRequestHeader("Authorization", `Token ${token}`);
 		xhr.send();
 	});

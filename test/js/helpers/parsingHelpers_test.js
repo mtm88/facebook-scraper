@@ -3,11 +3,10 @@ import {
 	parsedSearchURL,
 	userSeesPublicStories,
 	userSeesPublicPostsModal,
-} from "./../../src/js/helpers.js";
+} from "./../../../src/js/helpers/parsingHelpers.js";
 import { expect } from "chai";
-
-const fs = require("fs");
-const jsdom = require("jsdom");
+import fs from "fs";
+import jsdom from "jsdom";
 const { JSDOM } = jsdom;
 
 describe("#parseContentPosts", () => {
