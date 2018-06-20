@@ -1,7 +1,7 @@
 function authenticateUser() {
 	scriptHelpers.displayAuthenticatingWindow();
 	const xhr = new XMLHttpRequest();
-	debugger;
+
 	return chrome.storage.sync.get(["userLogin", "userPassword"], ({ userLogin, userPassword }) => {
 		if (!userLogin || !userPassword) {
 			const errorMessage = "Please insert your Login & Password in the plugin options";

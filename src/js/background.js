@@ -8,6 +8,12 @@ import {
 	displayAuthenticatingWindow,
 	hideAuthenticationWindow,
 } from "./helpers/authenticateUserHelper.js";
+import {
+	buildInjectionDiv,
+	buildMessageParagraph,
+	buildCloseButtonDiv,
+	buildContentDiv,
+} from "./helpers/injectSelectorHelper.js";
 import { APIconfig } from "./config.js";
 
 chrome.runtime.onInstalled.addListener(function () {
@@ -40,9 +46,7 @@ chrome.runtime.onMessage.addListener(function ({ action, payload }) {
 		});
 	}
 	case "removeInjection": {
-		return chrome.storage.local.set({ injectionToRemove: payload ? payload.id : null }, () => {
-			return scriptRunner("removeInjection");
-		});
+		return chrome.storage.local.set({ injectionToRemove: payload ? payload.id : null }, () =>  scriptRunner("removeInjection"));
 	}
 	case "userSelectedPage": {
 		return chrome.storage.local.set({
@@ -84,6 +88,11 @@ function scriptRunner(fileName, opts = {}) {
 					scriptHelpers = {
 						displayAuthenticatingWindow: ${displayAuthenticatingWindow},
 						hideAuthenticationWindow: ${hideAuthenticationWindow},
+						buildInjectionDiv: ${buildInjectionDiv},
+						buildMessageParagraph: ${buildMessageParagraph},
+						buildCloseButtonDiv: ${buildCloseButtonDiv},
+						buildContentDiv: ${buildContentDiv},
+					
 					}`,
 			}, () => chrome.tabs.executeScript(id, { file: `./src/js/scripts/${fileName}.js` }));
 		}
