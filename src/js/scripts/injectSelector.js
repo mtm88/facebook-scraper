@@ -8,12 +8,12 @@ function injectSelectionMenu() {
 	const correctModalIndex = scrollableArea.length > 1 ? 1 : 0;
 
 	if (!existingSelectionDiv) {
-		const div = opts.scriptHelpers.buildInjectionDiv(scrollableArea, userSeesModal, correctModalIndex);
-		div.appendChild(opts.scriptHelper.buildCloseButtonDiv());
-		div.appendChild(opts.scriptHelper.buildMessageParagraph());
+		const div = scriptHelpers.buildInjectionDiv(scrollableArea, userSeesModal, correctModalIndex);
+		div.appendChild(scriptHelpers.buildCloseButtonDiv());
+		div.appendChild(scriptHelpers.buildMessageParagraph());
 
 		if (opts && opts.pages && opts.pages.length) {
-			div.appendChild(opts.scriptHelper.buildContentDiv());
+			div.appendChild(scriptHelpers.buildContentDiv());
 		}
 
 		if (userSeesModal) {
