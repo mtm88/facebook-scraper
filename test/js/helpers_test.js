@@ -34,6 +34,16 @@ describe("#parseContentPosts", () => {
 		expect(selectedPost).to.have.property("searchURL", "https://www.facebook.com/search/top/");
 		expect(selectedPost).to.have.property("shares", 283);
 		expect(selectedPost).to.have.property("timeAdded", "20/06/2018 09:30");
-		expect(selectedPost.title.replace(/(\r\n\t|\n|\r\t)/gm,"").trim()).to.eq("The bosses of				ASDA and Sainsbury's are questioned by MPs on their proposed merger");
+		expect(selectedPost.title.replace(/(\r\n\t|\n|\r\t)/gm, "").trim()).to.eq("The bosses of				ASDA and Sainsbury's are questioned by MPs on their proposed merger");
+	});
+});
+
+describe("#parsedSearchURL", () => {
+	it("properly parses passed URL", () => {
+		expect(parsedSearchURL({ currentURL: "https://www.facebook.com/search/top/?q=asda" })).to.eq("https://www.facebook.com/search/top/");
+	});
+
+	it("doesn't throw an error when no URL passed", () => {
+		expect(parsedSearchURL()).to.eq(null);
 	});
 });
