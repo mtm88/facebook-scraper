@@ -65,7 +65,27 @@ function parsedSearchURL(opts) {
 	return null;
 }
 
+function userSeesPublicStories() {
+	if (opts && opts.currentURL) {
+		const definedUrlElements = ["search/str", "stories-keyword", "stories-public"];
+
+		const userOnPublicStories = (definedUrlElements.filter(el => opts.currentURL.indexOf(el) > -1)).length === definedUrlElements.length;
+		return userOnPublicStories;
+	}
+	return false;
+}
+
+function userSeesPublicPostsModal() {
+	const scrollableArea = document.getElementsByClassName("uiScrollableAreaWrap scrollable");
+	const userSeesModal = !!scrollableArea.length;
+	const correctModalIndex = scrollableArea.length > 1 ? 1 : 0;
+
+	return { userSeesModal, correctModalIndex: userSeesModal ? correctModalIndex : false };
+}
+
 export {
 	parseContentPosts,
 	parsedSearchURL,
+	userSeesPublicStories,
+	userSeesPublicPostsModal,
 };

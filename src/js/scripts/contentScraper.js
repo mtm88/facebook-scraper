@@ -1,14 +1,14 @@
 function contentScraper() {
 	/* facebook messenger overlay uses the same scrollableArea classes,
   if there's a message awaiting the array will have 1 more element */
-	const { userSeesModal, correctModalIndex } = userSeesPublicPostsModal();
+	const { userSeesModal, correctModalIndex } = helpers.userSeesPublicPostsModal();
 	let parentElement;
 
 	chrome.runtime.sendMessage({ action: "displayProgressWindow" });
 
 	if (userSeesModal) {
 		parentElement = document.getElementsByClassName("uiScrollableAreaWrap scrollable")[correctModalIndex];
-	} else if (userSeesPublicStories()) {
+	} else if (helpers.userSeesPublicStories()) {
 		parentElement = document.getElementById("browse_result_area");
 	} else {
 		return alert("Please open Public Posts before proceeding");
@@ -51,22 +51,4 @@ function scrollDown(parentElement, scrollCounter, userSeesModal) {
 		scrollCounter++;
 		fetchContentPosts(parentElement, scrollCounter, userSeesModal);
 	}, 3000);
-}
-
-function userSeesPublicPostsModal() {
-	const scrollableArea = document.getElementsByClassName("uiScrollableAreaWrap scrollable");
-	const userSeesModal = !!scrollableArea.length;
-	const correctModalIndex = scrollableArea.length > 1 ? 1 : 0;
-
-	return { userSeesModal, correctModalIndex };
-}
-
-function userSeesPublicStories() {
-	if (opts && opts.currentURL) {
-		const definedUrlElements = ["search/str", "stories-keyword", "stories-public"];
-
-		const userOnPublicStories = (definedUrlElements.filter(el => opts.currentURL.indexOf(el) > -1)).length === definedUrlElements.length;
-		return userOnPublicStories;
-	}
-	return false;
 }
