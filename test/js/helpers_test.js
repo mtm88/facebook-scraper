@@ -76,6 +76,6 @@ describe("#userSeesPublicPostsModal", () => {
 		const mockedPage = new JSDOM("<div></div>");
 		global.document = mockedPage.window.document;
 
-		expect(userSeesPublicPostsModal()).to.deep.eq({ userSeesModal: false, correctModalIndex:  });
+		expect(userSeesPublicPostsModal()).to.deep.eq({ userSeesModal: false, correctModalIndex: false });
 	});
 });
