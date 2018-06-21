@@ -4,7 +4,6 @@ function contentScraper() {
 	const { userSeesModal, correctModalIndex } = helpers.userSeesPublicPostsModal();
 	let parentElement;
 
-	
 	if (userSeesModal) {
 		parentElement = document.getElementsByClassName("uiScrollableAreaWrap scrollable")[correctModalIndex];
 	} else if (helpers.userSeesPublicStories()) {
@@ -29,7 +28,7 @@ function fetchContentPosts(parentElement, scrollCounter = 0, userSeesModal) {
 				divsWithPost = Array.from(divsWithPost).slice(0, recordsToPull);
 			}
 
-			return helpers.parseContentPosts(divsWithPost);
+			return fetchPostComments(divsWithPost).then(() => helpers.parseContentPosts(divsWithPost));
 		}
 
 		if (scrollCounter > 10) {
@@ -51,4 +50,67 @@ function scrollDown(parentElement, scrollCounter, userSeesModal) {
 		scrollCounter++;
 		fetchContentPosts(parentElement, scrollCounter, userSeesModal);
 	}, 3000);
+}
+
+function fetchPostComments(divsWithPost) {
+	const fetchCommentsPromises = Array.from(divsWithPost).map(div => () => awaitCommentsLoad(div));
+
+	return fetchCommentsPromises.reduce((div, nextDiv) => div.then(post => nextDiv().then(Array.prototype.concat.bind(post))), Promise.resolve([]));
+}
+
+function awaitCommentsLoad(post) {
+	try {
+		const postFooterElement = post.children[1].children[0].children[3].children[0].children[0].children[0].children[0].children[0].children[0];
+		const postCommentsElement = postFooterElement.children[0].children[0].children[0];
+		const postHasComments = postCommentsElement.textContent.indexOf("Comment") > -1;
+
+		if (postCommentsElement && postHasComments) {
+			postCommentsElement.click();
+
+			return new Promise((resolve) =>
+				setTimeout(() =>
+					collectComments(post)
+						.then((post) => {
+							// close the current Comments Block so that we don't slow down DOM
+							postCommentsElement.click();
+
+							return resolve(post);
+						}), 1000));
+		}
+		return Promise.resolve(post);
+	} catch (error) {
+		return Promise.resolve(post);
+	}
+}
+
+function collectComments(post, collectCounter = 0) {
+	return new Promise((resolve) => {
+		try {
+			if (collectCounter >= 10) {
+				return resolve(post);
+			}
+			const commentsElement = post.getElementsByClassName("UFIList")[0];
+
+			if (commentsElement) {
+				shutPrivacyModal();
+
+				const moreCommentsElement = commentsElement.getElementsByClassName("UFIPagerLink")[0];
+
+				// override it every loop in case we will hit the counter limit and resolve with 'post'
+				post.userComments = commentsElement.getElementsByClassName("UFICommentContent");
+
+				if (moreCommentsElement) {
+					moreCommentsElement.click();
+
+					return setTimeout(() => {
+						collectCounter++;
+						return resolve(collectComments(post, collectCounter));
+					}, 1000);
+				}
+				return resolve(post);
+			}
+		} catch (error) {
+			return resolve(post);
+		}
+	});
 }
