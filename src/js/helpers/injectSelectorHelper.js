@@ -2,8 +2,8 @@ function buildInjectionDiv(scrollableArea, userSeesModal, correctModalIndex) {
 	const div = document.createElement("div");
 
 	const currentElementBodyWidth = userSeesModal ? scrollableArea[correctModalIndex].clientWidth : document.body.clientWidth;
-	const calculatedDivLeft = userSeesModal ? ((document.body.clientWidth - currentElementBodyWidth) / 2) + (currentElementBodyWidth / 2 - 250) : (currentElementBodyWidth / 2) - 250;
-	const calculatedDivWidth = (currentElementBodyWidth * (userSeesModal ? 0.6 : 0.5));
+	const calculatedDivWidth = (currentElementBodyWidth * (userSeesModal ? 0.6 : 0.4));
+	const calculatedDivLeft = userSeesModal ? ((document.body.clientWidth - currentElementBodyWidth) / 2) + (currentElementBodyWidth / 2 - 250) : (currentElementBodyWidth / 2) - (calculatedDivWidth / 2);
 
 	div.id = "selectionInjectorDiv";
 	div.style.cssText = `display: flex; flex-direction: column; width: ${calculatedDivWidth}px; position: fixed; top: 100px; left: ${calculatedDivLeft}px; border-style: solid 1px; z-index: 1000; background-color: #ffffff`;
