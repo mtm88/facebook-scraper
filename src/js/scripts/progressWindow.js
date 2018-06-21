@@ -48,8 +48,14 @@ function displayProgressWindow() {
 			case "parsedPosts": {
 				const parsedPosts = JSON.parse(storage[key].newValue);
 
-				postsTableFields = [{ label: "Title", flex: 4 }, { label: "Author", flex: 2 }, { label: "Shares", flex: 1 }, { label: "Comments", flex: 1 }, { label: "Reactions", flex: 1 }];
-
+				postsTableFields = [
+					{ id: "title", label: "Title", flex: 4 },
+					{ id: "author", label: "Author", flex: 2 },
+					{ id: "shares", label: "Shares", flex: 1 },
+					{ id: "comments", label: "Comments", flex: 1 },
+					{ id: "reactions", label: "Reactions", flex: 1 },
+					{ id: "commentsContent", label: "Comments scraped", flex: 1, opts: { length: true } },
+				];
 
 				const parsedPostsWrapper = document.createElement("div");
 				parsedPostsWrapper.id = "parsedPostsWrapper";
@@ -74,11 +80,11 @@ function displayProgressWindow() {
 					postDivWrapper.id = `${parsedPost.contentId}Wrapper`;
 					postDivWrapper.style.cssText = "flex: 1; display: flex; flexDirection: row;";
 
-					postsTableFields.forEach(({ label, flex }) => {
+					postsTableFields.forEach(({ id, label, flex, opts = {} }) => {
 						const newCellField = document.createElement("div");
 						newCellField.id = `${label}cellField`;
 						newCellField.style.cssText = `flex: ${flex}; border-right: solid 1px; border-color: rgb(0, 0, 0, 0.25); padding: 5px;`;
-						newCellField.textContent = parsedPost[label.toLowerCase()];
+						newCellField.textContent = opts.length ? parsedPost[id].length : parsedPost[id];
 						postDivWrapper.appendChild(newCellField);
 					});
 

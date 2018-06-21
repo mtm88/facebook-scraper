@@ -1,5 +1,5 @@
 function parseContentPosts(divsWithPost) {
-	const fieldsToMap = ["title", "author", "timeAdded", "link", "contentId", "comments", "shares", "reactions"];
+	const fieldsToMap = ["title", "author", "timeAdded", "link", "contentId", "comments", "shares", "reactions", "commentsContent"];
 	const searchURL = this.parsedSearchURL(opts);
 
 	const fieldParsers = {
@@ -25,6 +25,15 @@ function parseContentPosts(divsWithPost) {
 		comments: ({ footer }) => {
 			const parsedComments = parseInt(footer.children[0].children[0].children[0].textContent.replace(/\D+/g, ""), 10);
 			return isNaN(parsedComments) ? null : parsedComments;
+		},
+		commentsContent: ({ post }) => {
+			const userComments = Array.from(post.userComments);
+
+			return userComments.map((comment) => {
+				const commentBody = comment.getElementsByClassName("UFICommentBody")[0];
+
+				return commentBody && commentBody.textContent || null;
+			}).filter(Boolean);
 		},
 		shares: ({ footer }) => {
 			const parsedShares = parseInt(footer.children[0].children[1].children[0].textContent.replace(/\D+/g, ""), 10);

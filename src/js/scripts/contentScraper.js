@@ -92,8 +92,6 @@ function collectComments(post, collectCounter = 0) {
 			const commentsElement = post.getElementsByClassName("UFIList")[0];
 
 			if (commentsElement) {
-				shutPrivacyModal();
-
 				const moreCommentsElement = commentsElement.getElementsByClassName("UFIPagerLink")[0];
 
 				// override it every loop in case we will hit the counter limit and resolve with 'post'
