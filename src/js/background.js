@@ -16,6 +16,8 @@ import {
 	buildContentDiv,
 } from "./helpers/injectSelectorHelper.js";
 import { removeInjection } from "./scripts/removeInjection.js";
+import { PostModel } from "./helpers/postModel.js";
+
 import { APIconfig } from "./config.js";
 
 chrome.runtime.onInstalled.addListener(function () {
@@ -84,6 +86,7 @@ function scriptRunner(fileName, opts = {}) {
 					 userSeesPublicStories: ${userSeesPublicStories},
 					 userSeesPublicPostsModal: ${userSeesPublicPostsModal},
 					 removeInjection: ${removeInjection},
+					 PostModel: ${PostModel},
 					};
 					scriptHelpers = {
 						displayAuthenticatingWindow: ${displayAuthenticatingWindow},

@@ -24,7 +24,7 @@ function displayAuthenticatingWindow() {
 }
 
 function hideAuthenticationWindow() {
-	helpers.removeInjection("authenticatingWindowDiv");
+	return helpers.removeInjection("authenticatingWindowDiv");
 }
 
 export {

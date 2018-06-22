@@ -1,6 +1,7 @@
 import {
 	parsePostWithContent,
 	parsedSearchURL,
+	fieldParser,
 	userSeesPublicStories,
 	userSeesPublicPostsModal,
 } from "./../../../src/js/helpers/parsingHelpers.js";
@@ -18,28 +19,28 @@ describe("Parsing Helpers", () => {
 			global.chrome = {
 				storage: {
 					local: {
-						set: () => true,
+						get: (fieldsToGet, getCb) => getCb({}),
+						set: (fieldsToSet, setCb) => setCb(),
 					},
 				},
 			};
 		});
 		it("properly parses raw post to expected format", () => {
 			const rawPost = JSDOM.fragment(fs.readFileSync("./test/mocks/raw_post_mock.html", "utf-8"));
-			const parsedPosts = parsePostWithContent.apply({ parsedSearchURL }, [[rawPost]]);
+			parsePostWithContent.apply({ parsedSearchURL, fieldParser }, [rawPost])
+				.then((parsedPost) => {
+					expect(parsedPost).to.be.an("object");
 
-			expect(parsedPosts).to.be.an("array");
-			expect(parsedPosts).to.have.length(1);
-
-			const selectedPost = parsedPosts[0];
-			expect(selectedPost.author.replace(/(\r\n\t|\n|\r\t)/gm, "").trim()).to.eq("ITV News");
-			expect(selectedPost).to.have.property("comments", 889);
-			expect(selectedPost).to.have.property("contentId", "10155949582962672");
-			expect(selectedPost).to.have.property("link", null);
-			expect(selectedPost).to.have.property("reactions", 393);
-			expect(selectedPost).to.have.property("searchURL", "https://www.facebook.com/search/top/");
-			expect(selectedPost).to.have.property("shares", 283);
-			expect(selectedPost).to.have.property("timeAdded", "20/06/2018 09:30");
-			expect(selectedPost.title.replace(/(\r\n\t|\n|\r\t)/gm, "").trim()).to.eq("The bosses of				ASDA and Sainsbury's are questioned by MPs on their proposed merger");
+					expect(parsedPost.author.replace(/(\r\n\t|\n|\r\t)/gm, "").trim()).to.eq("ITV News");
+					expect(parsedPost).to.have.property("comments", 889);
+					expect(parsedPost).to.have.property("contentId", "10155949582962672");
+					expect(parsedPost).to.have.property("link", null);
+					expect(parsedPost).to.have.property("reactions", 393);
+					expect(parsedPost).to.have.property("searchURL", "https://www.facebook.com/search/top/");
+					expect(parsedPost).to.have.property("shares", 283);
+					expect(parsedPost).to.have.property("timeAdded", "20/06/2018 09:30");
+					expect(parsedPost.title.replace(/(\r\n\t|\n|\r\t)/gm, "").trim()).to.eq("The bosses of				ASDA and Sainsbury's are questioned by MPs on their proposed merger");
+				});
 		});
 	});
 

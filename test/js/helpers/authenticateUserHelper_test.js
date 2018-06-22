@@ -23,12 +23,10 @@ describe("Authenticate UserHelpers", () => {
 
 	describe("#hideAuthenticationWindow", () => {
 		beforeEach(() => {
-			global.chrome = {
-				runtime: {
-					sendMessage: ({ action, payload }) => ({ action, payload }),
-				}
+			global.helpers = {
+				removeInjection: (divId) => divId,
 			};
 		});
-		it("sends the right message to background with correct DIV ID", () => expect(hideAuthenticationWindow()).to.deep.eq({ action: "removeInjection", payload: { id: "authenticatingWindowDiv" } }));
+		it("sends the right message to background with correct DIV ID", () => expect(hideAuthenticationWindow("authenticatingWindowDiv")).to.eq("authenticatingWindowDiv"));
 	});
 });
