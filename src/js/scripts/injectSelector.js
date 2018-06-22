@@ -9,7 +9,7 @@ function injectSelectionMenu() {
 
 	if (!existingSelectionDiv) {
 		const div = scriptHelpers.buildInjectionDiv(scrollableArea, userSeesModal, correctModalIndex);
-		div.appendChild(scriptHelpers.buildCloseButtonDiv());
+		div.appendChild(scriptHelpers.buildCloseButtonDiv("selectionInjectorDiv"));
 		div.appendChild(scriptHelpers.buildMessageParagraph());
 
 		if (opts && opts.pages && opts.pages.length) {

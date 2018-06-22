@@ -4,63 +4,23 @@ function displayProgressWindow() {
 	const calculatedDivWidth = currentElementBodyWidth * 0.7;
 	const calculatedDivLeft = (currentElementBodyWidth / 2) - (calculatedDivWidth / 2);
 
-	const div = document.createElement("div");
-	div.id = "progressWindowDiv";
-	div.style.cssText = `display: flex; flex-direction: column; width: ${calculatedDivWidth}px; position: fixed; top: 100px; left: ${calculatedDivLeft}px; z-index: 1000; background-color: #ffffff; overflow: hidden; border: 2px solid rgb(0, 0, 0, 0.2)`;
-	document.body.appendChild(div);
-
-	const closeDiv = document.createElement("div");
-	closeDiv.id = "closeButtonDiv";
-	closeDiv.style.cssText = "position: absolute; top: 0; right: 0; padding: 8px 10px; font-size: 15px;";
-	closeDiv.textContent = "X";
-	div.appendChild(closeDiv);
-
-	closeDiv.onmouseover = () => closeDiv.style.cursor = "pointer";
-	closeDiv.onclick = () =>helpers.removeInjection("progressWindowDiv");
-
-	const headerWrapperDiv = document.createElement("div");
-	headerWrapperDiv.id = "headerWrapperDiv";
-	headerWrapperDiv.style.cssText = "flex: 1; background-color: #ffffff;";
-	div.appendChild(headerWrapperDiv);
-
-	const progressSummary = document.createElement("p");
-	progressSummary.textContent = "Progress summary";
-	progressSummary.style.cssText = "padding: 10px 20px; font-weight: 800; font-size: 14px;";
-	headerWrapperDiv.appendChild(progressSummary);
-
-	const loadedSoFar = document.createElement("p");
-	loadedSoFar.id = "loadedSoFar";
-	loadedSoFar.textContent = "Posts loaded: 0";
-	loadedSoFar.style.cssText = "padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-weight: 500";
-	headerWrapperDiv.appendChild(loadedSoFar);
-
-	const parsedSoFar = document.createElement("p");
-	parsedSoFar.id = "parsedSoFar";
-	parsedSoFar.textContent = "Posts processed: 0";
-	parsedSoFar.style.cssText = "padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-weight: 500";
-	headerWrapperDiv.appendChild(parsedSoFar);
-
-	const userInfo = document.createElement("p");
-	userInfo.id = "userInfo";
-	userInfo.textContent = "Please don't manipulate the website while scraper is working. If you see no progress in the number of posts parsed for a long time, please restart the scraper.";
-	userInfo.style.cssText = "padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-size: 10px";
-	headerWrapperDiv.appendChild(userInfo);
-
-	const userWarning = document.createElement("p");
-	userWarning.id = "userWarning";
-	userWarning.textContent = "This browser tab has to stay ACTIVE during this process";
-	userWarning.style.cssText = "padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-style: italic; font-size: 10px; color: #FF0000";
-	headerWrapperDiv.appendChild(userWarning);
-
-	const headerFieldsWrapper = document.createElement("div");
-	headerFieldsWrapper.id = "headerFieldsWrapper";
-	headerFieldsWrapper.style.cssText = "flex: 1; display: flex; flexDirection: row;";
-	div.appendChild(headerFieldsWrapper);
+	const progressWindowDiv = scriptHelpers.buildProgressWindowDiv(calculatedDivLeft);
+	document.body.appendChild(progressWindowDiv);
+	progressWindowDiv.appendChild(scriptHelpers.buildCloseButtonDiv("progressWindowDiv"));
+	
+	const headerWrapperDiv = scriptHelpers.buildHeaderWrapperDiv();
+	progressWindowDiv.appendChild(headerWrapperDiv);
+	headerWrapperDiv.appendChild(scriptHelpers.buildProgressSummaryParagraph());
+	headerWrapperDiv.appendChild(scriptHelpers.buildLoadedSoFarParagraph());
+	headerWrapperDiv.appendChild(scriptHelpers.buildParsedSoFarParagraph());
+	headerWrapperDiv.appendChild(scriptHelpers.buildUserInfoParagraph());
+	headerWrapperDiv.appendChild(scriptHelpers.buildUserWarningParagraph());
+	progressWindowDiv.appendChild(scriptHelpers.buildHeaderFieldsWrapper());
 
 	const parsedPostsWrapper = document.createElement("div");
 	parsedPostsWrapper.id = "parsedPostsWrapper";
 	parsedPostsWrapper.style.cssText = "flex: 1; background-color: #ffffff; height: 400px; overflow-y: scroll; margin-right: -17px";
-	div.appendChild(parsedPostsWrapper);
+	progressWindowDiv.appendChild(parsedPostsWrapper);
 
 
 	postsTableFields = [
@@ -120,7 +80,7 @@ function displayProgressWindow() {
 					});
 						
 					chrome.storage.local.get(["recordsToPull"], ({ recordsToPull = 5 }) => {
-						// recordsToPull = 1;
+						recordsToPull = 10;
 						if (recordsToPull && recordsToPull === parsedPosts.length) {
 							// remove user information & user warning div
 							helpers.removeInjection("userInfo");

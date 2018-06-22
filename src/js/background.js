@@ -15,6 +15,16 @@ import {
 	buildCloseButtonDiv,
 	buildContentDiv,
 } from "./helpers/injectSelectorHelper.js";
+import {
+	buildProgressWindowDiv,
+	buildHeaderWrapperDiv,
+	buildProgressSummaryParagraph,
+	buildLoadedSoFarParagraph,
+	buildParsedSoFarParagraph,
+	buildUserInfoParagraph,
+	buildUserWarningParagraph,
+	buildHeaderFieldsWrapper,
+} from "./helpers/progressWindowHelpers.js";
 import { removeInjection } from "./scripts/removeInjection.js";
 import { PostModel } from "./helpers/postModel.js";
 
@@ -36,35 +46,35 @@ chrome.runtime.onInstalled.addListener(function () {
 
 chrome.runtime.onMessage.addListener(function ({ action, payload }) {
 	switch (action) {
-	case "injectSelector": {
-		return chrome.storage.sync.get(["isAuthed", "token"], ({ isAuthed, token }) => {
-			if (!isAuthed || !token) {
-				return scriptRunner("authenticateUser");
-			}
-
-			return chrome.storage.local.get(["pages"], (({ pages }) => {
-				if (!pages) {
-					return scriptRunner("loadPages");
+		case "injectSelector": {
+			return chrome.storage.sync.get(["isAuthed", "token"], ({ isAuthed, token }) => {
+				if (!isAuthed || !token) {
+					return scriptRunner("authenticateUser");
 				}
-	
-				return scriptRunner("injectSelector", { pages });
-			}));
-		});
-	}
-	case "userSelectedPage": {
-		return chrome.storage.local.set({
-			parsedPosts: [],
-			selectedPageId: payload.pageId,
-			recordsToPull: payload.recordsToPull,
-		}, () =>  scriptRunner("contentScraper"));
-	}
-	case "displayProgressWindow": {
-		return scriptRunner("progressWindow");
-	}
-	case "publishPosts": {
-		return chrome.storage.sync.get(["token"], ({ token }) =>  scriptRunner("publishPosts", { token }));
-	}
-	default: break;
+
+				return chrome.storage.local.get(["pages"], (({ pages }) => {
+					if (!pages) {
+						return scriptRunner("loadPages");
+					}
+
+					return scriptRunner("injectSelector", { pages });
+				}));
+			});
+		}
+		case "userSelectedPage": {
+			return chrome.storage.local.set({
+				parsedPosts: [],
+				selectedPageId: payload.pageId,
+				recordsToPull: payload.recordsToPull,
+			}, () => scriptRunner("contentScraper"));
+		}
+		case "displayProgressWindow": {
+			return scriptRunner("progressWindow");
+		}
+		case "publishPosts": {
+			return chrome.storage.sync.get(["token"], ({ token }) => scriptRunner("publishPosts", { token }));
+		}
+		default: break;
 	}
 });
 
@@ -95,7 +105,14 @@ function scriptRunner(fileName, opts = {}) {
 						buildMessageParagraph: ${buildMessageParagraph},
 						buildCloseButtonDiv: ${buildCloseButtonDiv},
 						buildContentDiv: ${buildContentDiv},
-					
+						buildProgressWindowDiv: ${buildProgressWindowDiv},
+						buildHeaderWrapperDiv: ${buildHeaderWrapperDiv},
+						buildProgressSummaryParagraph: ${buildProgressSummaryParagraph},
+						buildLoadedSoFarParagraph: ${buildLoadedSoFarParagraph},
+						buildParsedSoFarParagraph: ${buildParsedSoFarParagraph},
+						buildUserInfoParagraph: ${buildUserInfoParagraph},
+						buildUserWarningParagraph: ${buildUserWarningParagraph},
+						buildHeaderFieldsWrapper: ${buildHeaderFieldsWrapper},
 					}`,
 			}, () => chrome.tabs.executeScript(id, { file: `./src/js/scripts/${fileName}.js` }));
 		}

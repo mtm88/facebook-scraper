@@ -23,14 +23,14 @@ function buildMessageParagraph() {
 	return paragraphDiv;
 }
 
-function buildCloseButtonDiv() {
+function buildCloseButtonDiv(divId) {
 	const closeDiv = document.createElement("div");
 	closeDiv.id = "closeButtonDiv";
 	closeDiv.style.cssText = "position: absolute; top: 0; right: 0; padding: 8px 10px; font-size: 15px;";
 	closeDiv.textContent = "X";
 
 	closeDiv.onmouseover = () => closeDiv.style.cursor = "pointer";
-	closeDiv.onclick = () =>	helpers.removeInjection("selectionInjectorDiv");
+	closeDiv.onclick = () =>	helpers.removeInjection(divId);
 
 	return closeDiv;
 }

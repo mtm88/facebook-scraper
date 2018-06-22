@@ -46,7 +46,7 @@ describe("Inject Selector Helpers", () => {
 
 	describe("#buildCloseButtonDiv", () => {
 		it("returns a properly formatted Paragraph element", () => {
-			const closeDivToInject = buildCloseButtonDiv();
+			const closeDivToInject = buildCloseButtonDiv("testDivId");
 			expect(closeDivToInject.outerHTML).to.eq(`<div id="closeButtonDiv" style="position: absolute; top: 0px; right: 0px; padding: 8px 10px; font-size: 15px;">X</div>`);  // eslint-disable-line quotes
 		});
 	});
