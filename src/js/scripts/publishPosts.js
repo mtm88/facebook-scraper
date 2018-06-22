@@ -2,13 +2,22 @@ function publishPosts() {
 	return chrome.storage.local.get(["parsedPosts", "pages", "selectedPageId"], ({ parsedPosts, pages, selectedPageId }) => {
 		if (parsedPosts && parsedPosts.length) {
 			const selectedPageDetails = pages.find(({ settings: { pageId } }) => pageId === selectedPageId);
-
 			const postModels = parsedPosts.map(post => instanciatePostModel(post, selectedPageDetails));
-
 			const mappedModelRequests = postModels.map(model => () => sendPostRequest(model));
 
-			const results = mappedModelRequests.reduce((promise, modelReq) => promise.then(result => modelReq().then(Array.prototype.concat.bind(result))), Promise.resolve([]));
-			debugger;
+			const submitButton = document.getElementById("submitButton");
+			submitButton.outerHTML = "";
+
+			const sendingRequestsParagraph = document.createElement("p");
+			sendingRequestsParagraph.id = "parsedSoFar";
+			sendingRequestsParagraph.textContent = "Publishing posts...";
+			sendingRequestsParagraph.style.cssText = "padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-weight: 500";
+			headerWrapperDiv.appendChild(sendingRequestsParagraph);
+		
+			mappedModelRequests.reduce((promise, modelPostRequest) => promise.then(result => modelPostRequest().then(Array.prototype.concat.bind(result))), Promise.resolve([]))
+				.then((/* responses */) => {
+					sendingRequestsParagraph.textContent = "All posts have been successfully published";
+				});
 		} else {
 			return alert("Sorry, it seems there's no Public Posts to publish!");
 		}
@@ -17,10 +26,9 @@ function publishPosts() {
 
 function sendPostRequest(model) {
 	return new Promise((resolve) => {
-		debugger;
 		const xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = () => updateReqStatus(xhr, resolve);
-		xhr.open("POST", opts.config.APIconfig.publishURL, true);
+		xhr.open("POST", opts.config.APIconfig.publishURL);
 		xhr.setRequestHeader("Authorization", `Token ${opts.token}`);
 		xhr.setRequestHeader("Content-Type", "application/json");
 		return xhr.send(model);
@@ -29,9 +37,8 @@ function sendPostRequest(model) {
 
 function updateReqStatus({ readyState, status, responseText }, resolve) {
 	if (readyState === 4 && status === 200) {
-		debugger;
-		const response = JSON.parse(responseText);
-		return resolve();
+		const parsedResponse = JSON.parse(responseText);
+		return resolve(parsedResponse);
 	} else if (readyState === 4) {
 		const errorMessage = "Sorry, something went wrong while publishing the content";
 		alert(errorMessage);
@@ -67,7 +74,8 @@ class PostModel {
 	parsePostForPublish() {
 		this.parsedPost = {
 			...this.parsedPost,
-			ApiKey: this.selectedPageDetails.settings.collectionTokens[0],
+			ApiKey: "794467c0-5ca5-437a-acec-93838c4b352b",
+			// ApiKey: this.selectedPageDetails.settings.collectionTokens[0],
 			contentID: this.post.contentId,
 			contentType: this.selectedPageDetails.settings.collectorName,
 			Author: this.post.author || "Unknown",
@@ -75,16 +83,18 @@ class PostModel {
 	}
 
 	addField(fieldName, content, index, type, filtered) {
-		this.parsedPost.fields = [
-			...this.parsedPost.fields,
-			{
-				fieldname: fieldName,
-				content,
-				index,
-				type,
-				filtered,
-			},
-		];
+		if (content) {
+			this.parsedPost.fields = [
+				...this.parsedPost.fields,
+				{
+					fieldname: fieldName,
+					content,
+					index,
+					type,
+					filtered,
+				},
+			];
+		}
 	}
 }
 

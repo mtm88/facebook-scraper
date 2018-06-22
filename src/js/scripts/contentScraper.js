@@ -19,7 +19,7 @@ contentScraper();
 
 function fetchContentPosts(parentElement, scrollCounter = 0, userSeesModal) {
 	chrome.storage.local.get(["recordsToPull"], ({ recordsToPull = 50 }) => {
-		recordsToPull = 5;
+		recordsToPull = 10;
 		divsWithPost = parentElement.getElementsByClassName("userContentWrapper") || [];
 		const divsWithPostLength = divsWithPost.length;
 

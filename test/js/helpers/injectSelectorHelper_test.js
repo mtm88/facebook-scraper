@@ -33,7 +33,7 @@ describe("Inject Selector Helpers", () => {
 
 			const scrollableArea = window.document.getElementsByClassName("uiScrollableAreaWrap scrollable");
 			const divToInject = buildInjectionDiv([scrollableArea], false, 0);
-			expect(divToInject.outerHTML).to.eq(`<div id="selectionInjectorDiv" style="display: flex; flex-direction: column; width: 0px; position: fixed; top: 100px; left: -250px; z-index: 1000; background-color: rgb(255, 255, 255);"></div>`); // eslint-disable-line quotes
+			expect(divToInject.outerHTML).to.eq(`<div id="selectionInjectorDiv" style="display: flex; flex-direction: column; width: 0px; position: fixed; top: 100px; left: 0px; z-index: 1000; background-color: rgb(255, 255, 255);"></div>`); // eslint-disable-line quotes
 		});
 	});
 
@@ -55,7 +55,7 @@ describe("Inject Selector Helpers", () => {
 		before(() => {
 			global.opts = {
 				pages: [
-					{ id: 0, recordsToPull: 50 },
+					{ pageId: 0, recordsToPull: 50 },
 				],
 			};
 		});

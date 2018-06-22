@@ -28,23 +28,29 @@ function displayProgressWindow() {
 	progressSummary.style.cssText = "padding: 10px 20px; font-weight: 800; font-size: 14px;";
 	headerWrapperDiv.appendChild(progressSummary);
 
-	loadedSoFar = document.createElement("p");
+	const loadedSoFar = document.createElement("p");
 	loadedSoFar.id = "loadedSoFar";
 	loadedSoFar.textContent = "Posts loaded: 0";
 	loadedSoFar.style.cssText = "padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-weight: 500";
 	headerWrapperDiv.appendChild(loadedSoFar);
 
-	parsedSoFar = document.createElement("p");
+	const parsedSoFar = document.createElement("p");
 	parsedSoFar.id = "parsedSoFar";
 	parsedSoFar.textContent = "Posts processed: 0";
 	parsedSoFar.style.cssText = "padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-weight: 500";
 	headerWrapperDiv.appendChild(parsedSoFar);
 
-	userInfo = document.createElement("p");
+	const userInfo = document.createElement("p");
 	userInfo.id = "userInfo";
-	userInfo.textContent = "Please don't manipulate the website while scraper is working. If you see no progress in the number of posts parsed for a long time, please restart the process.";
-	userInfo.style.cssText = "padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-style: italic; font-size: 10px; color: #FF0000";
+	userInfo.textContent = "Please don't manipulate the website while scraper is working. If you see no progress in the number of posts parsed for a long time, please restart the scraper.";
+	userInfo.style.cssText = "padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-size: 10px";
 	headerWrapperDiv.appendChild(userInfo);
+
+	const userWarning = document.createElement("p");
+	userWarning.id = "userWarning";
+	userWarning.textContent = "This browser tab has to stay ACTIVE during this process";
+	userWarning.style.cssText = "padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-style: italic; font-size: 10px; color: #FF0000";
+	headerWrapperDiv.appendChild(userWarning);
 
 	const headerFieldsWrapper = document.createElement("div");
 	headerFieldsWrapper.id = "headerFieldsWrapper";
@@ -87,7 +93,7 @@ function displayProgressWindow() {
 				const parsedPosts = storage[key].newValue;
 					
 				// check if anything changed before updating the summary
-				if (parsedPosts) {
+				if (parsedPosts && parsedPosts.length) {
 					const alreadyInjectedPosts = parsedPostsWrapper.children.length;
 					const postsToInject = parsedPosts.slice(alreadyInjectedPosts);
 						
@@ -114,11 +120,13 @@ function displayProgressWindow() {
 					});
 						
 					chrome.storage.local.get(["recordsToPull"], ({ recordsToPull = 5 }) => {
-						recordsToPull = 5;
+						recordsToPull = 10;
 						if (recordsToPull && recordsToPull === parsedPosts.length) {
-							// remove user information div
+							// remove user information & user warning div
 							const userInfoDiv = document.getElementById("userInfo");
+							const userWarningDiv = document.getElementById("userWarning");
 							userInfoDiv.outerHTML = "";
+							userWarningDiv.outerHTML = "";
 							// Append the Submit button only when all results were loaded into the table
 							const submitButton = document.createElement("div");
 							submitButton.id = "submitButton";
