@@ -1,27 +1,6 @@
 
-function displayProgressWindow() {
-	const currentElementBodyWidth = document.body.clientWidth;
-	const calculatedDivWidth = currentElementBodyWidth * 0.7;
-	const calculatedDivLeft = (currentElementBodyWidth / 2) - (calculatedDivWidth / 2);
-
-	const progressWindowDiv = scriptHelpers.buildProgressWindowDiv(calculatedDivLeft);
-	document.body.appendChild(progressWindowDiv);
-	progressWindowDiv.appendChild(scriptHelpers.buildCloseButtonDiv("progressWindowDiv"));
-	
-	const headerWrapperDiv = scriptHelpers.buildHeaderWrapperDiv();
-	progressWindowDiv.appendChild(headerWrapperDiv);
-	headerWrapperDiv.appendChild(scriptHelpers.buildProgressSummaryParagraph());
-	headerWrapperDiv.appendChild(scriptHelpers.buildLoadedSoFarParagraph());
-	headerWrapperDiv.appendChild(scriptHelpers.buildParsedSoFarParagraph());
-	headerWrapperDiv.appendChild(scriptHelpers.buildUserInfoParagraph());
-	headerWrapperDiv.appendChild(scriptHelpers.buildUserWarningParagraph());
-	progressWindowDiv.appendChild(scriptHelpers.buildHeaderFieldsWrapper());
-
-	const parsedPostsWrapper = document.createElement("div");
-	parsedPostsWrapper.id = "parsedPostsWrapper";
-	parsedPostsWrapper.style.cssText = "flex: 1; background-color: #ffffff; height: 400px; overflow-y: scroll; margin-right: -17px";
-	progressWindowDiv.appendChild(parsedPostsWrapper);
-
+function activateProgressWindow() {
+	displayProgressWindow();
 
 	postsTableFields = [
 		{ id: "title", label: "Title", flex: 4 },
@@ -45,21 +24,21 @@ function displayProgressWindow() {
 			switch (key) {
 			case "divsWithPostLength": {
 				const loadedSoFar = document.getElementById("loadedSoFar");
-				const textContent = `Posts loaded: ${storage[key].newValue}`;
-				loadedSoFar.textContent = textContent;
+				loadedSoFar.textContent =  `Posts loaded: ${storage[key].newValue}`;
 				break;
 			}
 			case "parsedPosts": {
 				const parsedPosts = storage[key].newValue;
-					
+				const parsedPostsWrapper = document.getElementById("parsedPostsWrapper");
+				const headerWrapperDiv = document.getElementById("headerWrapperDiv");
+
 				// check if anything changed before updating the summary
 				if (parsedPosts && parsedPosts.length) {
 					const alreadyInjectedPosts = parsedPostsWrapper.children.length;
 					const postsToInject = parsedPosts.slice(alreadyInjectedPosts);
 						
 					const parsedSoFar = document.getElementById("parsedSoFar");
-					const textContent = `Posts processed: ${parsedPosts.length}`;
-					parsedSoFar.textContent = textContent;
+					parsedSoFar.textContent = `Posts processed: ${parsedPosts.length}`;
 
 					postsToInject.forEach((parsedPost) => {
 						const postDivWrapper = document.createElement("div");
@@ -106,4 +85,29 @@ function displayProgressWindow() {
 	});
 }
 
-displayProgressWindow();
+activateProgressWindow();
+
+function displayProgressWindow() {
+	const currentElementBodyWidth = document.body.clientWidth;
+	const calculatedDivWidth = currentElementBodyWidth * 0.7;
+	const calculatedDivLeft = (currentElementBodyWidth / 2) - (calculatedDivWidth / 2);
+
+	const progressWindowDiv = scriptHelpers.buildProgressWindowDiv(calculatedDivWidth, calculatedDivLeft);
+	document.body.appendChild(progressWindowDiv);
+	progressWindowDiv.appendChild(scriptHelpers.buildCloseButtonDiv("progressWindowDiv"));
+	
+	const headerWrapperDiv = scriptHelpers.buildHeaderWrapperDiv();
+	progressWindowDiv.appendChild(headerWrapperDiv);
+
+	headerWrapperDiv.appendChild(scriptHelpers.buildProgressSummaryParagraph());
+	headerWrapperDiv.appendChild(scriptHelpers.buildLoadedSoFarParagraph());
+	headerWrapperDiv.appendChild(scriptHelpers.buildParsedSoFarParagraph());
+	headerWrapperDiv.appendChild(scriptHelpers.buildUserInfoParagraph());
+	headerWrapperDiv.appendChild(scriptHelpers.buildUserWarningParagraph());
+	progressWindowDiv.appendChild(scriptHelpers.buildHeaderFieldsWrapper());
+
+	const parsedPostsWrapper = document.createElement("div");
+	parsedPostsWrapper.id = "parsedPostsWrapper";
+	parsedPostsWrapper.style.cssText = "flex: 1; background-color: #ffffff; height: 400px; overflow-y: scroll; margin-right: -17px";
+	progressWindowDiv.appendChild(parsedPostsWrapper);
+}
