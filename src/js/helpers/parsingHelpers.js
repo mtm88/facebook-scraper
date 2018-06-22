@@ -1,22 +1,24 @@
 function parsePostWithContent(post) {
-	const fieldsToMap = ["title", "author", "timeAdded", "link", "contentId", "comments", "shares", "reactions", "commentsContent"];
-	const searchURL = this.parsedSearchURL(opts);
-	const fieldParsers = this.fieldParser();
-	const parsedPost = { searchURL };
+	return new Promise((resolve) => {
+		const fieldsToMap = ["title", "author", "timeAdded", "link", "contentId", "comments", "shares", "reactions", "commentsContent"];
+		const searchURL = this.parsedSearchURL(opts);
+		const fieldParsers = this.fieldParser();
+		const parsedPost = { searchURL };
 
-	fieldsToMap.forEach((field) => {
-		try {
-			const header = fieldParsers.header({ post });
-			const footer = fieldParsers.footer({ post });
-			parsedPost[field] = fieldParsers[field]({ post, header, footer });
-		} catch (error) {
-			parsedPost[field] = null;
-		}
+		fieldsToMap.forEach((field) => {
+			try {
+				const header = fieldParsers.header({ post });
+				const footer = fieldParsers.footer({ post });
+				parsedPost[field] = fieldParsers[field]({ post, header, footer });
+			} catch (error) {
+				parsedPost[field] = null;
+			}
+		});
+
+		// observer in the background.js will pick this up and proceed
+		return chrome.storage.local.get(["parsedPosts"], ({ parsedPosts = [] }) =>
+			chrome.storage.local.set({ parsedPosts: [...parsedPosts, parsedPost] }, () => resolve(parsedPost)));
 	});
-
-	// observer in the background.js will pick this up and proceed
-	return chrome.storage.local.get(["parsedPosts"], ({ parsedPosts = [] }) =>
-		chrome.storage.local.set({ parsedPosts: [...parsedPosts, parsedPost] }, () => Promise.resolve(parsedPost)));
 }
 
 function parsedSearchURL(opts) {
