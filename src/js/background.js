@@ -15,6 +15,7 @@ import {
 	buildCloseButtonDiv,
 	buildContentDiv,
 } from "./helpers/injectSelectorHelper.js";
+import { removeInjection } from "./scripts/removeInjection.js";
 import { APIconfig } from "./config.js";
 
 chrome.runtime.onInstalled.addListener(function () {
@@ -48,19 +49,12 @@ chrome.runtime.onMessage.addListener(function ({ action, payload }) {
 			}));
 		});
 	}
-	case "removeInjection": {
-		return chrome.storage.local.set({ injectionToRemove: payload ? payload.id : null }, () =>  scriptRunner("removeInjection"));
-	}
 	case "userSelectedPage": {
 		return chrome.storage.local.set({
 			parsedPosts: [],
 			selectedPageId: payload.pageId,
-			injectionToRemove: payload.divId,
 			recordsToPull: payload.recordsToPull,
-		}, () => {
-			scriptRunner("removeInjection");
-			return scriptRunner("contentScraper");
-		});
+		}, () =>  scriptRunner("contentScraper"));
 	}
 	case "displayProgressWindow": {
 		return scriptRunner("progressWindow");
@@ -89,6 +83,7 @@ function scriptRunner(fileName, opts = {}) {
 					 parsedSearchURL: ${parsedSearchURL},
 					 userSeesPublicStories: ${userSeesPublicStories},
 					 userSeesPublicPostsModal: ${userSeesPublicPostsModal},
+					 removeInjection: ${removeInjection},
 					};
 					scriptHelpers = {
 						displayAuthenticatingWindow: ${displayAuthenticatingWindow},

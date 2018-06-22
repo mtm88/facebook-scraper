@@ -4,6 +4,8 @@ function contentScraper() {
 	const { userSeesModal, correctModalIndex } = helpers.userSeesPublicPostsModal();
 	let parentElement;
 
+	helpers.removeInjection("selectionInjectorDiv");
+
 	if (userSeesModal) {
 		parentElement = document.getElementsByClassName("uiScrollableAreaWrap scrollable")[correctModalIndex];
 	} else if (helpers.userSeesPublicStories()) {
@@ -19,7 +21,7 @@ contentScraper();
 
 function fetchContentPosts(parentElement, scrollCounter = 0, userSeesModal) {
 	chrome.storage.local.get(["recordsToPull"], ({ recordsToPull = 50 }) => {
-		recordsToPull = 10;
+		recordsToPull = 1;
 		divsWithPost = parentElement.getElementsByClassName("userContentWrapper") || [];
 		const divsWithPostLength = divsWithPost.length;
 
@@ -36,7 +38,7 @@ function fetchContentPosts(parentElement, scrollCounter = 0, userSeesModal) {
 			}
 
 			const promisesToProcess = Array.from(divsWithPost).map(div => () =>
-				fetchPostComments(div).then((postWithContent) =>  helpers.parsePostWithContent(postWithContent)));
+				fetchPostComments(div).then((postWithContent) => helpers.parsePostWithContent(postWithContent)));
 
 			return promisesToProcess.reduce((div, nextDiv) => div.then(post => nextDiv().then(Array.prototype.concat.bind(post))), Promise.resolve([]));
 		}

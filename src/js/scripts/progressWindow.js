@@ -16,7 +16,7 @@ function displayProgressWindow() {
 	div.appendChild(closeDiv);
 
 	closeDiv.onmouseover = () => closeDiv.style.cursor = "pointer";
-	closeDiv.onclick = () => chrome.runtime.sendMessage({ action: "removeInjection", payload: { id: "progressWindowDiv" } });
+	closeDiv.onclick = () =>helpers.removeInjection("progressWindowDiv");
 
 	const headerWrapperDiv = document.createElement("div");
 	headerWrapperDiv.id = "headerWrapperDiv";
@@ -120,13 +120,12 @@ function displayProgressWindow() {
 					});
 						
 					chrome.storage.local.get(["recordsToPull"], ({ recordsToPull = 5 }) => {
-						recordsToPull = 10;
+						recordsToPull = 1;
 						if (recordsToPull && recordsToPull === parsedPosts.length) {
 							// remove user information & user warning div
-							const userInfoDiv = document.getElementById("userInfo");
-							const userWarningDiv = document.getElementById("userWarning");
-							userInfoDiv.outerHTML = "";
-							userWarningDiv.outerHTML = "";
+							helpers.removeInjection("userInfo");
+							helpers.removeInjection("userWarning");
+							
 							// Append the Submit button only when all results were loaded into the table
 							const submitButton = document.createElement("div");
 							submitButton.id = "submitButton";

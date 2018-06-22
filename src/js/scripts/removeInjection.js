@@ -1,18 +1,11 @@
-function removeInjection() {
-	chrome.storage.local.get(["injectionToRemove"], (results) => {
-		if (results.injectionToRemove) {
-			const injectedElement = document.getElementById(results.injectionToRemove);
+function removeInjection(injectionToRemove) {
+	if (injectionToRemove) {
+		const injectedElement = document.getElementById(injectionToRemove);
 
-			if (injectedElement) {
-				injectedElement.outerHTML = "";
-			}
+		if (injectedElement) {
+			injectedElement.outerHTML = "";
 		}
-
-		chrome.storage.local.set({
-			injectionToRemove: null,
-			parsedPosts: [],
-		});
-	});
+	}
 }
 
-removeInjection();
+export { removeInjection };

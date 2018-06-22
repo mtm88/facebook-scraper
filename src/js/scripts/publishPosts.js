@@ -5,8 +5,7 @@ function publishPosts() {
 			const postModels = parsedPosts.map(post => instanciatePostModel(post, selectedPageDetails));
 			const mappedModelRequests = postModels.map(model => () => sendPostRequest(model));
 
-			const submitButton = document.getElementById("submitButton");
-			submitButton.outerHTML = "";
+			helpers.removeInjection("submitButton");
 
 			const sendingRequestsParagraph = document.createElement("p");
 			sendingRequestsParagraph.id = "parsedSoFar";

@@ -15,7 +15,7 @@ function displayAuthenticatingWindow() {
 	div.appendChild(closeDiv);
 
 	closeDiv.onmouseover = () => closeDiv.style.cursor = "pointer";
-	closeDiv.onclick = () => chrome.runtime.sendMessage({ action: "removeInjection", payload: { id: "authenticatingWindowDiv" } });
+	closeDiv.onclick = () => helpers.removeInjection("authenticatingWindowDiv");
 
 	const authMessage = document.createElement("p");
 	authMessage.textContent = "Authenticating with the server...";
@@ -24,7 +24,7 @@ function displayAuthenticatingWindow() {
 }
 
 function hideAuthenticationWindow() {
-	return chrome.runtime.sendMessage({ action: "removeInjection", payload: { id: "authenticatingWindowDiv" } });
+	helpers.removeInjection("authenticatingWindowDiv");
 }
 
 export {
