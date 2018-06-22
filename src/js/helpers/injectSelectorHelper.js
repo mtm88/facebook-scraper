@@ -40,12 +40,12 @@ function buildContentDiv() {
 	contentDiv.id = "contentDiv";
 	contentDiv.style.cssText = "display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start; margin: 0px 5px 30px;";
 
-	opts.pages.forEach(({ id, recordsToPull = 50 }) => {
+	opts.pages.forEach(({ settings: { pageId }, name, recordsToPull = 50 }) => {
 		const pageDiv = document.createElement("div");
 
-		pageDiv.id = id;
+		pageDiv.id = pageId;
 		pageDiv.style.cssText = "padding: 10px 20px; margin: 10px; border: solid 1px; border-color: rgb(0, 0, 0, 0.25); border-radius: 3px";
-		pageDiv.textContent = `Page ${id}`;
+		pageDiv.textContent = name;
 
 		pageDiv.onmouseover = () => {
 			pageDiv.style.cursor = "pointer";
@@ -56,7 +56,7 @@ function buildContentDiv() {
 			pageDiv.style["background-color"] = "#ffffff";
 		};
 
-		pageDiv.onclick = () => chrome.runtime.sendMessage({ action: "userSelectedPage", payload: { id, recordsToPull, divId: "selectionInjectorDiv" } });
+		pageDiv.onclick = () => chrome.runtime.sendMessage({ action: "userSelectedPage", payload: { pageId, recordsToPull, divId: "selectionInjectorDiv" } });
 
 		contentDiv.appendChild(pageDiv);
 	});

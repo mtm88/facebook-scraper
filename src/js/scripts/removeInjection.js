@@ -10,6 +10,7 @@ function removeInjection() {
 
 		chrome.storage.local.set({
 			injectionToRemove: null,
+			parsedPosts: [],
 		});
 	});
 }

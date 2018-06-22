@@ -22,7 +22,7 @@ function loadPages() {
 				pages = mockedCollectPages();
 			}
 
-			return chrome.storage.sync.set({ pages }, () => chrome.runtime.sendMessage({ action: "injectSelector" }));
+			return chrome.storage.local.set({ pages }, () => chrome.runtime.sendMessage({ action: "injectSelector" }));
 		} else if (readyState === 4) {
 			const errorMessage = "Sorry, failed to fetch Pages. Please try again";
 			alert(errorMessage);

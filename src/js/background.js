@@ -1,5 +1,6 @@
 import {
-	parseContentPosts,
+	parsePostWithContent,
+	fieldParser,
 	parsedSearchURL,
 	userSeesPublicStories,
 	userSeesPublicPostsModal,
@@ -33,16 +34,18 @@ chrome.runtime.onInstalled.addListener(function () {
 chrome.runtime.onMessage.addListener(function ({ action, payload }) {
 	switch (action) {
 	case "injectSelector": {
-		return chrome.storage.sync.get(["isAuthed", "token", "pages"], ({ isAuthed, token, pages }) => {
+		return chrome.storage.sync.get(["isAuthed", "token"], ({ isAuthed, token }) => {
 			if (!isAuthed || !token) {
 				return scriptRunner("authenticateUser");
 			}
 
-			if (!pages) {
-				return scriptRunner("loadPages");
-			}
-
-			return scriptRunner("injectSelector", { pages });
+			return chrome.storage.local.get(["pages"], (({ pages }) => {
+				if (!pages) {
+					return scriptRunner("loadPages");
+				}
+	
+				return scriptRunner("injectSelector", { pages });
+			}));
 		});
 	}
 	case "removeInjection": {
@@ -50,7 +53,8 @@ chrome.runtime.onMessage.addListener(function ({ action, payload }) {
 	}
 	case "userSelectedPage": {
 		return chrome.storage.local.set({
-			selectedPageId: payload.id,
+			parsedPosts: [],
+			selectedPageId: payload.pageId,
 			injectionToRemove: payload.divId,
 			recordsToPull: payload.recordsToPull,
 		}, () => {
@@ -62,7 +66,7 @@ chrome.runtime.onMessage.addListener(function ({ action, payload }) {
 		return scriptRunner("progressWindow");
 	}
 	case "publishPosts": {
-		return scriptRunner("publishPosts");
+		return chrome.storage.sync.get(["token"], ({ token }) =>  scriptRunner("publishPosts", { token }));
 	}
 	default: break;
 	}
@@ -80,7 +84,8 @@ function scriptRunner(fileName, opts = {}) {
 					...opts,
 				})};
 				helpers = {
-					parseContentPosts: ${parseContentPosts},
+					parsePostWithContent: ${parsePostWithContent},
+					fieldParser: ${fieldParser},
 					 parsedSearchURL: ${parsedSearchURL},
 					 userSeesPublicStories: ${userSeesPublicStories},
 					 userSeesPublicPostsModal: ${userSeesPublicPostsModal},

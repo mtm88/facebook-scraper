@@ -1,5 +1,5 @@
 import {
-	parseContentPosts,
+	parsePostWithContent,
 	parsedSearchURL,
 	userSeesPublicStories,
 	userSeesPublicPostsModal,
@@ -10,7 +10,7 @@ import jsdom from "jsdom";
 const { JSDOM } = jsdom;
 
 describe("Parsing Helpers", () => {
-	describe("#parseContentPosts", () => {
+	describe("#parsePostWithContent", () => {
 		beforeEach(() => {
 			global.opts = {
 				currentURL: "https://www.facebook.com/search/top/?q=asda",
@@ -25,7 +25,7 @@ describe("Parsing Helpers", () => {
 		});
 		it("properly parses raw post to expected format", () => {
 			const rawPost = JSDOM.fragment(fs.readFileSync("./test/mocks/raw_post_mock.html", "utf-8"));
-			const parsedPosts = parseContentPosts.apply({ parsedSearchURL }, [[rawPost]]);
+			const parsedPosts = parsePostWithContent.apply({ parsedSearchURL }, [[rawPost]]);
 
 			expect(parsedPosts).to.be.an("array");
 			expect(parsedPosts).to.have.length(1);

@@ -18,17 +18,27 @@ function contentScraper() {
 contentScraper();
 
 function fetchContentPosts(parentElement, scrollCounter = 0, userSeesModal) {
-	divsWithPost = parentElement.getElementsByClassName("userContentWrapper") || [];
-	chrome.storage.local.set({ divsWithPost, divsWithPostLength: divsWithPost.length });
-
 	chrome.storage.local.get(["recordsToPull"], ({ recordsToPull = 50 }) => {
+		recordsToPull = 5;
+		divsWithPost = parentElement.getElementsByClassName("userContentWrapper") || [];
+		const divsWithPostLength = divsWithPost.length;
+
+		// async but we don't need to wait for it to resolve, it only updates the DOM with progress
+		chrome.storage.local.set({
+			divsWithPost,
+			divsWithPostLength: divsWithPostLength > recordsToPull ? recordsToPull : divsWithPostLength,
+		});
+
 		if (divsWithPost.length >= recordsToPull) {
 			// slice the array if we've pulled more than we require
 			if (divsWithPost.length > recordsToPull) {
 				divsWithPost = Array.from(divsWithPost).slice(0, recordsToPull);
 			}
 
-			return fetchPostComments(divsWithPost).then(() => helpers.parseContentPosts(divsWithPost));
+			const promisesToProcess = Array.from(divsWithPost).map(div => () =>
+				fetchPostComments(div).then((postWithContent) =>  helpers.parsePostWithContent(postWithContent)));
+
+			return promisesToProcess.reduce((div, nextDiv) => div.then(post => nextDiv().then(Array.prototype.concat.bind(post))), Promise.resolve([]));
 		}
 
 		if (scrollCounter > 10) {
@@ -52,13 +62,7 @@ function scrollDown(parentElement, scrollCounter, userSeesModal) {
 	}, 3000);
 }
 
-function fetchPostComments(divsWithPost) {
-	const fetchCommentsPromises = Array.from(divsWithPost).map(div => () => awaitCommentsLoad(div));
-
-	return fetchCommentsPromises.reduce((div, nextDiv) => div.then(post => nextDiv().then(Array.prototype.concat.bind(post))), Promise.resolve([]));
-}
-
-function awaitCommentsLoad(post) {
+function fetchPostComments(post) {
 	try {
 		const postFooterElement = post.children[1].children[0].children[3].children[0].children[0].children[0].children[0].children[0].children[0];
 		const postCommentsElement = postFooterElement.children[0].children[0].children[0];
@@ -105,8 +109,8 @@ function collectComments(post, collectCounter = 0) {
 						return resolve(collectComments(post, collectCounter));
 					}, 1000);
 				}
-				return resolve(post);
 			}
+			return resolve(post);
 		} catch (error) {
 			return resolve(post);
 		}

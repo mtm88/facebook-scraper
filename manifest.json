@@ -8,7 +8,8 @@
     "declarativeContent",
     "storage",
     "http://*.ondemand.crisp/service.svc/json/session/*",
-    "https://*.ondemand.crisp/service.svc/json/session/*"
+    "https://*.ondemand.crisp/service.svc/json/session/*",
+    "http://dev-rmf-od/rmf/v2/SubmitUgc"
   ],
   "background": {
     "page": "./src/html/background.html",
