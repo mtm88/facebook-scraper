@@ -14,7 +14,7 @@ const mockedPageDetails = {
 };
 
 describe("Post Model", () => {
-	beforeEach(function instiantiateModel () {
+	beforeEach(function instiantiateModel() {
 		this.modelInstance = new PostModel(mockedPost, mockedPageDetails);
 	});
 	afterEach(function cleanModelInstance() {
@@ -36,14 +36,28 @@ describe("Post Model", () => {
 			expect(parsedPost).to.have.property("contentID");
 			expect(parsedPost).to.have.property("contentType");
 			expect(parsedPost).to.have.property("Author");
-			
+
 			expect(parsedPost.contentType).to.eq("test.content.type");
 		});
-		
+
 		it("Sets the Author name to 'Unknown' if not included in post object", function () {
 			this.modelInstance.parsePostForPublish();
 
 			expect(this.modelInstance.parsedPost.Author).to.eq("Unknown");
+		});
+	});
+
+	describe("#addField", () => {
+		it("properly extends 'parsedPost.fields' array with passed data", function () {
+			this.modelInstance.addField("testName", "testContent", 0, "testType", false);
+
+			const { parsedPost: { fields: [{ fieldname, content, index, type, filtered }] } } = this.modelInstance;
+			
+			expect(fieldname).to.eq("testName");
+			expect(content).to.eq("testContent");
+			expect(index).to.eq(0);
+			expect(type).to.eq("testType");
+			expect(filtered).to.be.false;
 		});
 	});
 });
