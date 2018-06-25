@@ -29,7 +29,7 @@ function sendPostRequest(model) {
 		const xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = () => updateReqStatus(xhr, resolve);
 		xhr.open("POST", opts.config.APIconfig.publishURL);
-		xhr.setRequestHeader("Authorization", `Token ${opts.token}`);
+		// xhr.setRequestHeader("Authorization", `Token ${opts.token}`);
 		xhr.setRequestHeader("Content-Type", "application/json");
 		return xhr.send(model);
 	});
