@@ -10,8 +10,10 @@
             "args": [
                 "--require",
                 "babel-core/register",
+                "--require",
+                "babel-polyfill",
                 "--timeout",
-                "1000",
+                "10000",
                 "--colors",
                 "--recursive",
                 "${workspaceFolder}/test"
