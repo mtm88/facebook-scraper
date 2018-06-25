@@ -1,17 +1,31 @@
 import "chromedriver";
-import { Builder, By, until } from "selenium-webdriver";
+import { Builder, Capabilities, By, until } from "selenium-webdriver";
 import chrome from "selenium-webdriver/chrome";
+import fs from "fs";
+import path from "path";
 
-describe.only("Facebook scraper", function () {
+async function getPluginBuffer(fileName) {
+	return new Promise((resolve, reject) => {
+		return fs.readFile(path.resolve(__dirname, `../../${fileName}`), (error, results) => {
+			if (!error) {
+				return resolve(results);
+			}
+			return reject(error);
+		});
+	});
+}
+
+describe.skip("Facebook scraper", function () {
 	it("works", async function () {
+		// const pluginBuffer = await getPluginBuffer("JSScraper.Facebook.crx");
+
 		const driver = await new Builder()
 			.forBrowser("chrome")
 			.setChromeOptions(new chrome.Options()
 				.addArguments([
 					"--disable-notifications",
-					// "--load-extension C:/Repos/JSScraper.Facebook/JSScraper.Facebook.crx"
 				])
-				.addExtensions(".\\..\\..\\Repos\\JSScraper.Facebook\\JSScraper.Facebook.crx")
+				// .addExtensions(pluginBuffer)
 			)
 			.build();
 		try {
@@ -30,8 +44,7 @@ describe.only("Facebook scraper", function () {
 
 			const queryElement = driver.findElement(By.name("q"));
 			queryElement.sendKeys("asda");
-			driver.sleep(1000);
-			queryElement.submit();
+			// queryElement.submit();
 		} catch (error) {
 			console.log(error);
 			debugger;
