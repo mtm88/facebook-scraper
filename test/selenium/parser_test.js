@@ -6,7 +6,7 @@ import path from "path";
 
 async function getPluginBuffer(fileName) {
 	return new Promise((resolve, reject) => {
-		return fs.readFile(path.resolve(__dirname, `../../${fileName}`), (error, results) => {
+		return fs.readFile(path.resolve(__dirname, `../../${fileName}`), "base64", (error, results) => {
 			if (!error) {
 				return resolve(results);
 			}
@@ -15,9 +15,9 @@ async function getPluginBuffer(fileName) {
 	});
 }
 
-describe.skip("Facebook scraper", function () {
+describe.only("Facebook scraper", function () {
 	it("works", async function () {
-		// const pluginBuffer = await getPluginBuffer("JSScraper.Facebook.crx");
+		const pluginBuffer = await getPluginBuffer("JSScraper.Facebook.crx");
 
 		const driver = await new Builder()
 			.forBrowser("chrome")
@@ -25,7 +25,7 @@ describe.skip("Facebook scraper", function () {
 				.addArguments([
 					"--disable-notifications",
 				])
-				// .addExtensions(pluginBuffer)
+				.addExtensions(pluginBuffer)
 			)
 			.build();
 		try {
