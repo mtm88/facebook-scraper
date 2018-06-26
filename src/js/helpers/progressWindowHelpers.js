@@ -23,12 +23,17 @@ function buildProgressSummaryParagraph() {
 }
 
 function buildLoadedSoFarParagraph() {
-	const loadedSoFar = document.createElement("p");
-	loadedSoFar.id = "loadedSoFar";
-	loadedSoFar.textContent = "Posts loaded: 0";
-	loadedSoFar.style.cssText = "padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-weight: 500";
+	return new Promise((resolve) => {
+		const loadedSoFar = document.createElement("p");
+		loadedSoFar.id = "loadedSoFar";
+		loadedSoFar.textContent = "Posts loaded: 0";
+		loadedSoFar.style.cssText = "padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-weight: 500";
 
-	return loadedSoFar;
+		return chrome.storage.local.get(["divsWithPostLength"], (({ divsWithPostLength }) => {
+			loadedSoFar.textContent = `Posts loaded: ${divsWithPostLength}`;
+			return resolve(loadedSoFar);
+		}));
+	});
 }
 
 function buildParsedSoFarParagraph() {
