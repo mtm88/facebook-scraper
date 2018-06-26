@@ -15,7 +15,7 @@ async function getPluginBuffer(fileName) {
 	});
 }
 
-describe.only("Facebook scraper", function () {
+describe.skip("Facebook scraper", function () {
 	it("works", async function () {
 		const pluginBuffer = await getPluginBuffer("JSScraper.Facebook.crx");
 

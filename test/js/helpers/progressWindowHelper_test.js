@@ -52,11 +52,11 @@ describe("Progress Window Helper", () => {
 	});
 
 	describe("#buildLoadedSoFarParagraph", () => {
-		it("returns 'Loaded So Far' paragraph", () => {
-			const loadedSoFarP = buildLoadedSoFarParagraph();
+		it("returns 'Loaded So Far' paragraph", async () => {
+			const loadedSoFarP = await buildLoadedSoFarParagraph();
 
 			expect(loadedSoFarP).to.exist;
-			expect(loadedSoFarP.outerHTML).to.eq(`<p id="loadedSoFar" style="padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-weight: 500;">Posts loaded: 0</p>`);  // eslint-disable-line quotes
+			expect(loadedSoFarP.outerHTML).to.eq(`<p id="loadedSoFar" style="padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-weight: 500;">Posts loaded: undefined</p>`);  // eslint-disable-line quotes
 		});
 	});
 
