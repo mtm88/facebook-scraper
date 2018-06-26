@@ -14,15 +14,23 @@ function publishPosts() {
 
 			helpers.removeInjection("submitButton");
 
-			const sendingRequestsParagraph = document.createElement("p");
-			sendingRequestsParagraph.id = "sentRequestsP";
-			sendingRequestsParagraph.textContent = "Publishing posts...";
-			sendingRequestsParagraph.style.cssText = "padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-weight: 500";
-			headerWrapperDiv.appendChild(sendingRequestsParagraph);
+			const pStyle = "padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-weight: 500";
+			const sendingRequestsP = document.createElement("p");
+			sendingRequestsP.id = "sendingRequestsP";
+			sendingRequestsP.textContent = "Sending data...";
+			sendingRequestsP.style.cssText = pStyle;
+			const sentRequestsP = document.createElement("p");
+			sentRequestsP.id = "sentRequestsP";
+			sentRequestsP.textContent = 0;
+			sentRequestsP.style.cssText = pStyle;
+			headerWrapperDiv.appendChild(sendingRequestsP);
+			headerWrapperDiv.appendChild(sentRequestsP);
 
 			mappedModelRequests.reduce((promise, modelPostRequest) => promise.then(result => modelPostRequest().then(Array.prototype.concat.bind(result))), Promise.resolve([]))
 				.then((/* responses */) => {
-					sendingRequestsParagraph.textContent = "All posts have been successfully published";
+					helpers.removeInjection("sendingRequestsP");
+					sentRequestsP.style.fontWeight = 600;
+					sentRequestsP.textContent = "All posts have been successfully published";
 				});
 		} else {
 			return alert("Sorry, it seems there's no Public Posts to publish!");
@@ -44,6 +52,10 @@ function sendPostRequest(model) {
 function updateReqStatus({ readyState, status, responseText }, resolve) {
 	if (readyState === 4 && status === 200) {
 		const parsedResponse = JSON.parse(responseText);
+
+		const sentRequestsP = document.getElementById("sentRequestsP");
+		sentRequestsP.textContent = parseInt(sentRequestsP.textContent, 10) + 1;
+
 		return resolve(parsedResponse);
 	} else if (readyState === 4) {
 		const errorMessage = "Sorry, something went wrong while publishing the content";
