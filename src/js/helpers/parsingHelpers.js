@@ -90,13 +90,17 @@ function fieldParser() {
 			const contentId = post.children[1].children[0].children[1].getAttribute("value");
 
 			return userComments.map((comment, i) => {
-				const author = comment.getElementsByClassName("UFICommentActorAndBody")[0].children[0].children[0].textContent;
-				const commentBody = comment.getElementsByClassName("UFICommentBody")[0].textContent;
-				return {
-					contentId: `${contentId}-comment${i}`,
-					author,
-					commentBody,
-				};
+				try {
+					const author = comment.getElementsByClassName("UFICommentActorAndBody")[0].children[0].children[0].textContent;
+					const commentBody = comment.getElementsByClassName("UFICommentBody")[0].textContent;
+					return {
+						contentId: `${contentId}-comment${i}`,
+						author,
+						commentBody,
+					};
+				} catch (error) {
+					return null;
+				}
 			}).filter(Boolean);
 		},
 		shares: ({ footer }) => {
