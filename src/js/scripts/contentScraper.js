@@ -100,7 +100,7 @@ function collectComments(post, collectCounter = 0) {
 			if (commentsElement) {
 				const moreCommentsElement = commentsElement.getElementsByClassName("UFIPagerLink")[0];
 
-				// override it every loop in case we will hit the counter limit and resolve with 'post'
+				// override it every loop in case we will hit the counter limit and resolve with  current 'post' content
 				post.userComments = commentsElement.getElementsByClassName("UFICommentContent");
 
 				if (moreCommentsElement) {
