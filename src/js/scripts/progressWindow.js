@@ -1,6 +1,6 @@
 
-function activateProgressWindow() {
-	displayProgressWindow();
+async function activateProgressWindow() {
+	await displayProgressWindow();
 
 	postsTableFields = [
 		{ id: "title", label: "Title", flex: 4 },
@@ -11,6 +11,8 @@ function activateProgressWindow() {
 		{ id: "reactions", label: "Reactions", flex: 1 },
 	];
 
+	const headerFieldsWrapper = document.getElementById("headerFieldsWrapper");
+
 	postsTableFields.forEach(({ label, flex }) => {
 		const fieldHeader = document.createElement("div");
 		fieldHeader.id = `${label.toLowerCase()}Header`;
@@ -19,108 +21,122 @@ function activateProgressWindow() {
 		headerFieldsWrapper.appendChild(fieldHeader);
 	});
 
-	chrome.storage.onChanged.addListener((storage) => {
-		for (key in storage) {
-			switch (key) {
-			case "divsWithPostLength": {
-				const loadedSoFar = document.getElementById("loadedSoFar");
-				if (loadedSoFar) {
-					loadedSoFar.textContent = `Posts loaded: ${storage[key].newValue}`;
-				}
-				break;
-			}
-			case "parsedPosts": {
-				const parsedPosts = storage[key].newValue;
-				const parsedPostsWrapper = document.getElementById("parsedPostsWrapper");
-				const headerWrapperDiv = document.getElementById("headerWrapperDiv");
-
-				// check if anything changed before updating the summary
-				if (parsedPosts && parsedPosts.length) {
-					const alreadyInjectedPosts = parsedPostsWrapper.children.length;
-					const postsToInject = parsedPosts.slice(alreadyInjectedPosts);
-						
-					const parsedSoFar = document.getElementById("parsedSoFar");
-					parsedSoFar.textContent = `Posts processed: ${parsedPosts.length}`;
-
-					postsToInject.forEach((parsedPost) => {
-						const postDivWrapper = document.createElement("div");
-						postDivWrapper.id = `${parsedPost.contentId}Wrapper`;
-						postDivWrapper.style.cssText = "flex: 1; display: flex; flexDirection: row;";
-
-						postsTableFields.forEach(({ id, label, flex, opts = {} }) => {
-							const newCellField = document.createElement("div");
-							newCellField.id = `${label}cellField`;
-							newCellField.style.cssText = `flex: ${flex}; border-right: solid 1px; border-color: rgb(0, 0, 0, 0.25); border-bottom: solid 1px rgb(0, 0, 0, 0.2); padding: 5px;`;
-
-							// nested ternary as a guard against null values expected to have 'length' property
-							newCellField.textContent = opts.length ? (parsedPost[id] && parsedPost[id].length) : parsedPost[id];
-							postDivWrapper.appendChild(newCellField);
-						});
-
-						parsedPostsWrapper.prepend(postDivWrapper);
-					});
-						
-					chrome.storage.local.get(["recordsToPull"], ({ recordsToPull = 5 }) => {
-						recordsToPull = 20;
-						if (recordsToPull && recordsToPull === parsedPosts.length) {
-							// remove user information & user warning div
-							helpers.removeInjection("userInfo");
-							helpers.removeInjection("userWarning");
-							helpers.removeInjection("submitButton");
-							
-							// Append the Submit button only when all results were loaded into the table
-							const submitButton = document.createElement("div");
-							submitButton.id = "submitButton";
-							submitButton.style.cssText = "padding: 10px 20px; margin-left: 20px; margin-bottom: 20px; border-radius: 5px; width: 80px; text-align: center; font-size: 14px; background-color: #6699ff";
-							submitButton.textContent = "Submit";
-							submitButton.onmouseover = () => submitButton.style.cursor = "pointer";
-							submitButton.onclick = () => chrome.runtime.sendMessage({ action: "publishPosts" });
-			
-							headerWrapperDiv.appendChild(submitButton);
-						}
-					});
-				}
-				break;
-			}
-			default: break;
-			}
-		}
-	});
+	chrome.storage.onChanged.addListener(storageChangeListener);
 }
 
 activateProgressWindow();
 
-function displayProgressWindow() {
-	const currentElementBodyWidth = document.body.clientWidth;
-	const calculatedDivWidth = currentElementBodyWidth * 0.7;
-	const calculatedDivLeft = (currentElementBodyWidth / 2) - (calculatedDivWidth / 2);
+function storageChangeListener(storage) {
+	for (key in storage) {
+		switch (key) {
+		case "divsWithPostLength": {
+			const loadedSoFar = document.getElementById("loadedSoFar");
+			if (loadedSoFar) {
+				loadedSoFar.textContent = `Posts loaded: ${storage[key].newValue}`;
+			}
+			break;
+		}
+		case "parsedPosts": {
+			const parsedPosts = storage[key].newValue;
+			const parsedPostsWrapper = document.getElementById("parsedPostsWrapper");
+			const headerWrapperDiv = document.getElementById("headerWrapperDiv");
 
-	const progressWindowDiv = scriptHelpers.buildProgressWindowDiv(calculatedDivWidth, calculatedDivLeft);
+			// check if anything changed before updating the summary
+			if (parsedPosts && parsedPosts.length) {
+				const alreadyInjectedPosts = parsedPostsWrapper.children.length;
+				const postsToInject = parsedPosts.slice(alreadyInjectedPosts);
 
-	const { userSeesModal, correctModalIndex } = helpers.userSeesPublicPostsModal();
+				const parsedSoFar = document.getElementById("parsedSoFar");
+				parsedSoFar.textContent = `Posts processed: ${parsedPosts.length}`;
 
-	// decide where to append the progress window, as injecting outside modal will close it on interaction
-	if (userSeesModal) {
-		const parentElement = document.getElementsByClassName("uiScrollableAreaWrap scrollable")[correctModalIndex];
-		parentElement.appendChild(progressWindowDiv);
-	} else {
-		document.body.appendChild(progressWindowDiv);
+				postsToInject.forEach((parsedPost) => {
+					const postDivWrapper = document.createElement("div");
+					postDivWrapper.id = `${parsedPost.contentId}Wrapper`;
+					postDivWrapper.style.cssText = "flex: 1; display: flex; flexDirection: row;";
+
+					postsTableFields.forEach(({ id, label, flex, opts = {} }) => {
+						const newCellField = document.createElement("div");
+						newCellField.id = `${label}cellField`;
+						newCellField.style.cssText = `flex: ${flex}; border-right: solid 1px; border-color: rgb(0, 0, 0, 0.25); border-bottom: solid 1px rgb(0, 0, 0, 0.2); padding: 5px;`;
+
+						// nested ternary as a guard against null values expected to have 'length' property
+						newCellField.textContent = opts.length ? (parsedPost[id] && parsedPost[id].length) : parsedPost[id];
+						postDivWrapper.appendChild(newCellField);
+					});
+
+					parsedPostsWrapper.prepend(postDivWrapper);
+				});
+
+				chrome.storage.local.get(["recordsToPull"], ({ recordsToPull = 5 }) => {
+					// recordsToPull = 10;
+					if (recordsToPull && recordsToPull === parsedPosts.length) {
+						// remove user information & user warning div
+						helpers.removeInjection("userInfo");
+						helpers.removeInjection("userWarning");
+						helpers.removeInjection("submitButton");
+
+						// Append the Submit button only when all results were loaded into the table
+						const submitButton = document.createElement("div");
+						submitButton.id = "submitButton";
+						submitButton.style.cssText = "padding: 10px 20px; margin-left: 20px; margin-bottom: 20px; border-radius: 5px; width: 80px; text-align: center; font-size: 14px; background-color: #6699ff";
+						submitButton.textContent = "Submit";
+						submitButton.onmouseover = () => submitButton.style.cursor = "pointer";
+						submitButton.onclick = () => chrome.runtime.sendMessage({ action: "publishPosts" });
+
+						headerWrapperDiv.appendChild(submitButton);
+					}
+				});
+			}
+			break;
+		}
+		default: break;
+		}
 	}
+}
 
-	progressWindowDiv.appendChild(scriptHelpers.buildCloseButtonDiv("progressWindowDiv"));
-	
-	const headerWrapperDiv = scriptHelpers.buildHeaderWrapperDiv();
-	progressWindowDiv.appendChild(headerWrapperDiv);
+function displayProgressWindow() {
+	return new Promise(async (resolve) => {
+		const currentElementBodyWidth = document.body.clientWidth;
+		const calculatedDivWidth = currentElementBodyWidth * 0.7;
+		const calculatedDivLeft = (currentElementBodyWidth / 2) - (calculatedDivWidth / 2);
 
-	headerWrapperDiv.appendChild(scriptHelpers.buildProgressSummaryParagraph());
-	headerWrapperDiv.appendChild(scriptHelpers.buildLoadedSoFarParagraph());
-	headerWrapperDiv.appendChild(scriptHelpers.buildParsedSoFarParagraph());
-	headerWrapperDiv.appendChild(scriptHelpers.buildUserInfoParagraph());
-	headerWrapperDiv.appendChild(scriptHelpers.buildUserWarningParagraph());
-	progressWindowDiv.appendChild(scriptHelpers.buildHeaderFieldsWrapper());
+		const progressWindowDiv = scriptHelpers.buildProgressWindowDiv(calculatedDivWidth, calculatedDivLeft);
 
-	const parsedPostsWrapper = document.createElement("div");
-	parsedPostsWrapper.id = "parsedPostsWrapper";
-	parsedPostsWrapper.style.cssText = "flex: 1; background-color: #ffffff; height: 400px; overflow-y: scroll; margin-right: -17px";
-	progressWindowDiv.appendChild(parsedPostsWrapper);
+		const { userSeesModal, correctModalIndex } = helpers.userSeesPublicPostsModal();
+
+		// decide where to append the progress window, as injecting outside modal will close it on interaction
+		if (userSeesModal) {
+			const parentElement = document.getElementsByClassName("uiScrollableAreaWrap scrollable")[correctModalIndex];
+			parentElement.appendChild(progressWindowDiv);
+		} else {
+			document.body.appendChild(progressWindowDiv);
+		}
+
+		progressWindowDiv.appendChild(scriptHelpers.buildCloseButtonDiv("progressWindowDiv"));
+
+		const headerWrapperDiv = scriptHelpers.buildHeaderWrapperDiv();
+		progressWindowDiv.appendChild(headerWrapperDiv);
+
+		headerWrapperDiv.appendChild(scriptHelpers.buildProgressSummaryParagraph());
+
+		// 'Loaded so far' is a promise because it has to check the value in chrome storage
+		try {
+			const builtParagraph = await scriptHelpers.buildLoadedSoFarParagraph();
+			headerWrapperDiv.appendChild(builtParagraph);
+		} catch (error) {
+			console.error(error);
+		}
+
+		headerWrapperDiv.appendChild(scriptHelpers.buildParsedSoFarParagraph());
+		headerWrapperDiv.appendChild(scriptHelpers.buildUserInfoParagraph());
+		headerWrapperDiv.appendChild(scriptHelpers.buildUserWarningParagraph());
+		progressWindowDiv.appendChild(scriptHelpers.buildHeaderFieldsWrapper());
+
+		const parsedPostsWrapper = document.createElement("div");
+		parsedPostsWrapper.id = "parsedPostsWrapper";
+		parsedPostsWrapper.style.cssText = "flex: 1; background-color: #ffffff; height: 400px; overflow-y: scroll; margin-right: -17px";
+		progressWindowDiv.appendChild(parsedPostsWrapper);
+
+		return resolve();
+	});
 }
