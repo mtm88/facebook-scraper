@@ -60,7 +60,7 @@ function instanciateModels(post, selectedPageDetails) {
 }
 
 function parsePostModel(post, selectedPageDetails) {
-	const postModel = new helpers.PostModel(post, selectedPageDetails);
+	const postModel = new helpers.DataModel(post, selectedPageDetails);
 	postModel.parseDataForPublish();
 
 	const textType = "text/plain";
@@ -77,7 +77,7 @@ function parsePostModel(post, selectedPageDetails) {
 
 function parseCommentModels({ commentsContent = [] }, selectedPageDetails) {
 	return commentsContent.map((comment) => {
-		const commentModel = new helpers.CommentModel(comment, selectedPageDetails);
+		const commentModel = new helpers.DataModel(comment, selectedPageDetails);
 		commentModel.parseDataForPublish();
 
 		const textType = "text/plain";

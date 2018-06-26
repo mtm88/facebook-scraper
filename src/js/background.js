@@ -26,8 +26,7 @@ import {
 	buildHeaderFieldsWrapper,
 } from "./helpers/progressWindowHelpers.js";
 import { removeInjection } from "./scripts/removeInjection.js";
-import { PostModel } from "./helpers/postModel.js";
-import { CommentModel } from "./helpers/commentModel.js";
+import { DataModel } from "./helpers/dataModel.js";
 
 import { APIconfig } from "./config.js";
 
@@ -98,8 +97,7 @@ function scriptRunner(fileName, opts = {}) {
 					 userSeesPublicStories: ${userSeesPublicStories},
 					 userSeesPublicPostsModal: ${userSeesPublicPostsModal},
 					 removeInjection: ${removeInjection},
-					 PostModel: ${PostModel},
-					 CommentModel: ${CommentModel},
+					 DataModel: ${DataModel},
 					};
 					scriptHelpers = {
 						displayAuthenticatingWindow: ${displayAuthenticatingWindow},

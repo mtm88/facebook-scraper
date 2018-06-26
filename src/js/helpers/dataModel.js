@@ -1,4 +1,4 @@
-class PostModel {
+class DataModel {
 	constructor(post, selectedPageDetails) {
 		this.data = post;
 		this.selectedPageDetails = selectedPageDetails;
@@ -34,4 +34,6 @@ class PostModel {
 	}
 }
 
-export { PostModel };
+export {
+	DataModel,
+};
