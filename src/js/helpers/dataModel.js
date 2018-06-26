@@ -1,6 +1,6 @@
 class DataModel {
-	constructor(post, selectedPageDetails) {
-		this.data = post;
+	constructor(data, selectedPageDetails) {
+		this.data = data;
 		this.selectedPageDetails = selectedPageDetails;
 		this.parsedData = {
 			fields: [],
