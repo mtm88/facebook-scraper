@@ -4,8 +4,13 @@ function publishPosts() {
 
 		if (parsedPosts && parsedPosts.length) {
 			const selectedPageDetails = pages.find(({ settings: { pageId } }) => pageId === selectedPageId);
-			const postModels = parsedPosts.map(post => instanciatePostModel(post, selectedPageDetails));
-			const mappedModelRequests = postModels.map(model => () => sendPostRequest(model));
+			const dataModels = parsedPosts.map(post => instanciateModels(post, selectedPageDetails));
+			const mappedModelRequests = [];
+			
+			dataModels.forEach(({ parsedPostModel, parsedCommentModels = [] }) => {
+				mappedModelRequests.push(() => sendPostRequest(parsedPostModel));
+				parsedCommentModels.forEach((parsedCommentModel) => mappedModelRequests.push(() => sendPostRequest(parsedCommentModel)));
+			});
 
 			helpers.removeInjection("submitButton");
 
@@ -14,7 +19,7 @@ function publishPosts() {
 			sendingRequestsParagraph.textContent = "Publishing posts...";
 			sendingRequestsParagraph.style.cssText = "padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-weight: 500";
 			headerWrapperDiv.appendChild(sendingRequestsParagraph);
-		
+
 			mappedModelRequests.reduce((promise, modelPostRequest) => promise.then(result => modelPostRequest().then(Array.prototype.concat.bind(result))), Promise.resolve([]))
 				.then((/* responses */) => {
 					sendingRequestsParagraph.textContent = "All posts have been successfully published";
@@ -47,9 +52,16 @@ function updateReqStatus({ readyState, status, responseText }, resolve) {
 	}
 }
 
-function instanciatePostModel(post, selectedPageDetails) {
+function instanciateModels(post, selectedPageDetails) {
+	const parsedPostModel = parsePostModel(post, selectedPageDetails);
+	const parsedCommentModels = post.commentsContent ? parseCommentModels(post, selectedPageDetails) : [];
+
+	return { parsedPostModel, parsedCommentModels };
+}
+
+function parsePostModel(post, selectedPageDetails) {
 	const postModel = new helpers.PostModel(post, selectedPageDetails);
-	postModel.parsePostForPublish();
+	postModel.parseDataForPublish();
 
 	const textType = "text/plain";
 	postModel.addField("Title", post.title, 0, textType);
@@ -60,7 +72,20 @@ function instanciatePostModel(post, selectedPageDetails) {
 	postModel.addField("Shares", post.shares, 5, textType);
 	postModel.addField("Reactions", post.reactions, 6, textType);
 
-	return JSON.stringify(postModel.parsedPost);
+	return JSON.stringify(postModel.parsedData);
+}
+
+function parseCommentModels({ commentsContent = [] }, selectedPageDetails) {
+	return commentsContent.map((comment) => {
+		const commentModel = new helpers.CommentModel(comment, selectedPageDetails);
+		commentModel.parseDataForPublish();
+
+		const textType = "text/plain";
+		commentModel.addField("Author", comment.author, 0, textType);
+		commentModel.addField("Comment", comment.commentBody, 1, textType);
+
+		return JSON.stringify(commentModel.parsedData);
+	});
 }
 
 publishPosts();

@@ -87,10 +87,16 @@ function fieldParser() {
 		commentsContent: ({ post }) => {
 			const userComments = Array.from(post.userComments);
 
-			return userComments.map((comment) => {
-				const commentBody = comment.getElementsByClassName("UFICommentBody")[0];
+			const contentId = post.children[1].children[0].children[1].getAttribute("value");
 
-				return commentBody && commentBody.textContent || null;
+			return userComments.map((comment, i) => {
+				const author = comment.getElementsByClassName("UFICommentActorAndBody")[0].children[0].children[0].textContent;
+				const commentBody = comment.getElementsByClassName("UFICommentBody")[0].textContent;
+				return {
+					contentId: `${contentId}-comment${i}`,
+					author,
+					commentBody,
+				};
 			}).filter(Boolean);
 		},
 		shares: ({ footer }) => {

@@ -21,7 +21,7 @@ async function activateProgressWindow() {
 		headerFieldsWrapper.appendChild(fieldHeader);
 	});
 
-	chrome.storage.onChanged.addListener(storageChangeListener);
+	chrome.storage.onChanged.addListener((storage) => storageChangeListener(storage));
 }
 
 activateProgressWindow();
@@ -68,7 +68,7 @@ function storageChangeListener(storage) {
 				});
 
 				chrome.storage.local.get(["recordsToPull"], ({ recordsToPull = 5 }) => {
-					// recordsToPull = 10;
+					recordsToPull = 3;
 					if (recordsToPull && recordsToPull === parsedPosts.length) {
 						// remove user information & user warning div
 						helpers.removeInjection("userInfo");

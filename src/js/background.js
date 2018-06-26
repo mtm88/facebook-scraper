@@ -27,6 +27,7 @@ import {
 } from "./helpers/progressWindowHelpers.js";
 import { removeInjection } from "./scripts/removeInjection.js";
 import { PostModel } from "./helpers/postModel.js";
+import { CommentModel } from "./helpers/commentModel.js";
 
 import { APIconfig } from "./config.js";
 
@@ -98,6 +99,7 @@ function scriptRunner(fileName, opts = {}) {
 					 userSeesPublicPostsModal: ${userSeesPublicPostsModal},
 					 removeInjection: ${removeInjection},
 					 PostModel: ${PostModel},
+					 CommentModel: ${CommentModel},
 					};
 					scriptHelpers = {
 						displayAuthenticatingWindow: ${displayAuthenticatingWindow},

@@ -1,6 +1,6 @@
-class PostModel {
-	constructor(post, selectedPageDetails) {
-		this.data = post;
+class CommentModel {
+	constructor(comment, selectedPageDetails) {
+		this.data = comment;
 		this.selectedPageDetails = selectedPageDetails;
 		this.parsedData = {
 			fields: [],
@@ -34,4 +34,4 @@ class PostModel {
 	}
 }
 
-export { PostModel };
+export { CommentModel };
