@@ -1,7 +1,7 @@
 import { DataModel } from "./../../../src/js/helpers/dataModel.js";
 import { expect } from "chai";
 
-const mockedPost = {
+const mockedData = {
 	title: "Test Title",
 	content: "Test content",
 };
@@ -13,37 +13,37 @@ const mockedPageDetails = {
 	},
 };
 
-describe.skip("Post Model", () => {
+describe("Data Model", () => {
 	beforeEach(function instiantiateModel() {
-		this.modelInstance = new PostModel(mockedPost, mockedPageDetails);
+		this.modelInstance = new DataModel(mockedData, mockedPageDetails);
 	});
 	afterEach(function cleanModelInstance() {
 		this.modelInstance = null;
 	});
-	describe("Post Model constructor", () => {
+	describe("Data Model constructor", () => {
 		it("Properly initialises with passed parameters", function () {
-			expect(this.modelInstance.parsedPost).to.exist;
-			expect(this.modelInstance.post).to.deep.eq(mockedPost);
+			expect(this.modelInstance.parsedData).to.exist;
+			expect(this.modelInstance.data).to.deep.eq(mockedData);
 			expect(this.modelInstance.selectedPageDetails).to.deep.eq(mockedPageDetails);
 		});
 	});
 
-	describe("#parsePostForPublish", () => {
+	describe("#parseDataForPublish", () => {
 		it("Properly sets required request parameters on the model instance", function () {
-			this.modelInstance.parsePostForPublish();
-			const { parsedPost } = this.modelInstance;
-			expect(parsedPost).to.have.property("ApiKey");
-			expect(parsedPost).to.have.property("contentID");
-			expect(parsedPost).to.have.property("contentType");
-			expect(parsedPost).to.have.property("Author");
+			this.modelInstance.parseDataForPublish();
+			const { parsedData } = this.modelInstance;
+			expect(parsedData).to.have.property("ApiKey");
+			expect(parsedData).to.have.property("contentID");
+			expect(parsedData).to.have.property("contentType");
+			expect(parsedData).to.have.property("Author");
 
-			expect(parsedPost.contentType).to.eq("test.content.type");
+			expect(parsedData.contentType).to.eq("test.content.type");
 		});
 
-		it("Sets the Author name to 'Unknown' if not included in post object", function () {
-			this.modelInstance.parsePostForPublish();
+		it("Sets the Author name to 'Unknown' if not included in data object", function () {
+			this.modelInstance.parseDataForPublish();
 
-			expect(this.modelInstance.parsedPost.Author).to.eq("Unknown");
+			expect(this.modelInstance.parsedData.Author).to.eq("Unknown");
 		});
 	});
 
@@ -51,7 +51,7 @@ describe.skip("Post Model", () => {
 		it("properly extends 'parsedPost.fields' array with passed data", function () {
 			this.modelInstance.addField("testName", "testContent", 0, "testType", false);
 
-			const { parsedPost: { fields: [{ fieldname, content, index, type, filtered }] } } = this.modelInstance;
+			const { parsedData: { fields: [{ fieldname, content, index, type, filtered }] } } = this.modelInstance;
 			
 			expect(fieldname).to.eq("testName");
 			expect(content).to.eq("testContent");
