@@ -24,7 +24,9 @@ function activateProgressWindow() {
 			switch (key) {
 			case "divsWithPostLength": {
 				const loadedSoFar = document.getElementById("loadedSoFar");
-				loadedSoFar.textContent =  `Posts loaded: ${storage[key].newValue}`;
+				if (loadedSoFar) {
+					loadedSoFar.textContent = `Posts loaded: ${storage[key].newValue}`;
+				}
 				break;
 			}
 			case "parsedPosts": {
@@ -59,7 +61,7 @@ function activateProgressWindow() {
 					});
 						
 					chrome.storage.local.get(["recordsToPull"], ({ recordsToPull = 5 }) => {
-						// recordsToPull = 10;
+						recordsToPull = 20;
 						if (recordsToPull && recordsToPull === parsedPosts.length) {
 							// remove user information & user warning div
 							helpers.removeInjection("userInfo");
@@ -94,7 +96,17 @@ function displayProgressWindow() {
 	const calculatedDivLeft = (currentElementBodyWidth / 2) - (calculatedDivWidth / 2);
 
 	const progressWindowDiv = scriptHelpers.buildProgressWindowDiv(calculatedDivWidth, calculatedDivLeft);
-	document.body.appendChild(progressWindowDiv);
+
+	const { userSeesModal, correctModalIndex } = helpers.userSeesPublicPostsModal();
+
+	// decide where to append the progress window, as injecting outside modal will close it on interaction
+	if (userSeesModal) {
+		const parentElement = document.getElementsByClassName("uiScrollableAreaWrap scrollable")[correctModalIndex];
+		parentElement.appendChild(progressWindowDiv);
+	} else {
+		document.body.appendChild(progressWindowDiv);
+	}
+
 	progressWindowDiv.appendChild(scriptHelpers.buildCloseButtonDiv("progressWindowDiv"));
 	
 	const headerWrapperDiv = scriptHelpers.buildHeaderWrapperDiv();

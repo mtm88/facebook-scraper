@@ -1,6 +1,7 @@
 
 function publishPosts() {
 	return chrome.storage.local.get(["parsedPosts", "pages", "selectedPageId"], ({ parsedPosts, pages, selectedPageId }) => {
+
 		if (parsedPosts && parsedPosts.length) {
 			const selectedPageDetails = pages.find(({ settings: { pageId } }) => pageId === selectedPageId);
 			const postModels = parsedPosts.map(post => instanciatePostModel(post, selectedPageDetails));
@@ -9,7 +10,7 @@ function publishPosts() {
 			helpers.removeInjection("submitButton");
 
 			const sendingRequestsParagraph = document.createElement("p");
-			sendingRequestsParagraph.id = "parsedSoFar";
+			sendingRequestsParagraph.id = "sentRequestsP";
 			sendingRequestsParagraph.textContent = "Publishing posts...";
 			sendingRequestsParagraph.style.cssText = "padding-left: 20px; margin-top: 8px; margin-bottom: 20px; font-weight: 500";
 			headerWrapperDiv.appendChild(sendingRequestsParagraph);

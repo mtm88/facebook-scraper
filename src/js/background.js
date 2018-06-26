@@ -64,6 +64,7 @@ chrome.runtime.onMessage.addListener(function ({ action, payload }) {
 	case "userSelectedPage": {
 		return chrome.storage.local.set({
 			parsedPosts: [],
+			divsWithPostLength: 0,
 			selectedPageId: payload.pageId,
 			recordsToPull: payload.recordsToPull,
 		}, () => scriptRunner("contentScraper"));
