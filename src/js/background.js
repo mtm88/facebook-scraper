@@ -24,6 +24,7 @@ import {
 	buildUserInfoParagraph,
 	buildUserWarningParagraph,
 	buildHeaderFieldsWrapper,
+	buildParsedPostsWrapper,
 } from "./helpers/progressWindowHelpers.js";
 import { removeInjection } from "./scripts/removeInjection.js";
 import { DataModel } from "./helpers/dataModel.js";
@@ -114,6 +115,7 @@ function scriptRunner(fileName, opts = {}) {
 						buildUserInfoParagraph: ${buildUserInfoParagraph},
 						buildUserWarningParagraph: ${buildUserWarningParagraph},
 						buildHeaderFieldsWrapper: ${buildHeaderFieldsWrapper},
+						buildParsedPostsWrapper: ${buildParsedPostsWrapper},
 					}`,
 			}, () => chrome.tabs.executeScript(id, { file: `./src/js/scripts/${fileName}.js` }));
 		}

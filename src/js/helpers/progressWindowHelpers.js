@@ -71,6 +71,14 @@ function buildHeaderFieldsWrapper() {
 	return headerFieldsWrapper;
 }
 
+function buildParsedPostsWrapper() {
+	const parsedPostsWrapper = document.createElement("div");
+	parsedPostsWrapper.id = "parsedPostsWrapper";
+	parsedPostsWrapper.style.cssText = "flex: 1; background-color: #ffffff; height: 400px; overflow-y: scroll; margin-right: -17px";
+	
+	return parsedPostsWrapper;
+}
+
 export {
 	buildProgressWindowDiv,
 	buildHeaderWrapperDiv,
@@ -80,4 +88,5 @@ export {
 	buildUserInfoParagraph,
 	buildUserWarningParagraph,
 	buildHeaderFieldsWrapper,
+	buildParsedPostsWrapper,
 };

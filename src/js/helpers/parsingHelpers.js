@@ -72,7 +72,22 @@ function fieldParser() {
 				return null;
 			}
 		},
-		title: ({ post }) => post.children[0].children[1].children[2].children[0].textContent,
+		title: ({ post }) => {
+			let title;
+			try {
+				// regular route for a title
+				title = post.children[0].children[1].children[2].children[0].textContent;
+				
+				if (!title) {
+					// if there's no title but user uploaded some content (images etc.) with description
+					title = post.children[0].children[1].children[1].children[0].textContent;
+				}
+
+				return title;
+			} catch (error) {
+				return null;
+			}
+		},
 		author: ({ header }) => header ? header.children[0].children[0].children[0].children[0].textContent : null,
 		timeAdded: ({ header }) => header ? header.children[1].children[2].children[0].children[0].children[0].getAttribute("title") : null,
 		link: ({ post }) => post.children[0].children[1].children[3].children[0].children[0].children[0].children[0].children[0].children[0].children[1].children[1].getAttribute("href"),
