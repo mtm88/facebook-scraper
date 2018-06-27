@@ -47,36 +47,42 @@ chrome.runtime.onInstalled.addListener(function () {
 
 chrome.runtime.onMessage.addListener(function ({ action, payload }) {
 	switch (action) {
-	case "injectSelector": {
-		return chrome.storage.sync.get(["isAuthed", "token"], ({ isAuthed, token }) => {
-			if (!isAuthed || !token) {
-				return scriptRunner("authenticateUser");
-			}
-
-			return chrome.storage.local.get(["pages"], (({ pages }) => {
-				if (!pages) {
-					return scriptRunner("loadPages");
+		case "injectSelector": {
+			return chrome.storage.sync.get(["isAuthed", "token"], ({ isAuthed, token }) => {
+				if (!isAuthed || !token) {
+					return scriptRunner("authenticateUser");
 				}
 
-				return scriptRunner("injectSelector", { pages });
-			}));
-		});
+				return chrome.storage.local.get(["pages"], (({ pages }) => {
+					if (!pages) {
+						return scriptRunner("loadPages");
+					}
+
+					return scriptRunner("injectSelector", { pages });
+				}));
+			});
+		}
+		case "userSelectedPage": {
+			return chrome.storage.local.set({
+				parsedPosts: [],
+				divsWithPostLength: 0,
+				selectedPageId: payload.pageId,
+				recordsToPull: payload.recordsToPull,
+			}, () => scriptRunner("contentScraper"));
+		}
+		case "displayProgressWindow": {
+			return scriptRunner("progressWindow");
+		}
+		case "publishPosts": {
+			return chrome.storage.sync.get(["token"], ({ token }) => scriptRunner("publishPosts", { token }));
+		}
+		default: break;
 	}
-	case "userSelectedPage": {
-		return chrome.storage.local.set({
-			parsedPosts: [],
-			divsWithPostLength: 0,
-			selectedPageId: payload.pageId,
-			recordsToPull: payload.recordsToPull,
-		}, () => scriptRunner("contentScraper"));
-	}
-	case "displayProgressWindow": {
-		return scriptRunner("progressWindow");
-	}
-	case "publishPosts": {
-		return chrome.storage.sync.get(["token"], ({ token }) => scriptRunner("publishPosts", { token }));
-	}
-	default: break;
+});
+
+chrome.tabs.onUpdated.addListener(function (tabId, { status }, { url }) {
+	if (status && status === "complete" && url.includes("https://www.facebook.com")) {
+		scriptRunner("injectTestDiv");
 	}
 });
 

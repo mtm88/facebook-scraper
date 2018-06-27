@@ -29,67 +29,67 @@ activateProgressWindow();
 function storageChangeListener(storage) {
 	for (key in storage) {
 		switch (key) {
-		case "divsWithPostLength": {
-			const loadedSoFar = document.getElementById("loadedSoFar");
-			if (loadedSoFar) {
-				loadedSoFar.textContent = `Posts loaded: ${storage[key].newValue}`;
+			case "divsWithPostLength": {
+				const loadedSoFar = document.getElementById("loadedSoFar");
+				if (loadedSoFar) {
+					loadedSoFar.textContent = `Posts loaded: ${storage[key].newValue}`;
+				}
+				break;
 			}
-			break;
-		}
-		case "parsedPosts": {
-			const parsedPosts = storage[key].newValue;
-			const parsedPostsWrapper = document.getElementById("parsedPostsWrapper");
-			const headerWrapperDiv = document.getElementById("headerWrapperDiv");
+			case "parsedPosts": {
+				const parsedPosts = storage[key].newValue;
+				const parsedPostsWrapper = document.getElementById("parsedPostsWrapper");
+				const headerWrapperDiv = document.getElementById("headerWrapperDiv");
 
-			// check if anything changed before updating the summary
-			if (parsedPosts && parsedPosts.length) {
-				const alreadyInjectedPosts = parsedPostsWrapper.children.length;
-				const postsToInject = parsedPosts.slice(alreadyInjectedPosts);
+				// check if anything changed before updating the summary
+				if (parsedPosts && parsedPosts.length) {
+					const alreadyInjectedPosts = parsedPostsWrapper.children.length;
+					const postsToInject = parsedPosts.slice(alreadyInjectedPosts);
 
-				const parsedSoFar = document.getElementById("parsedSoFar");
-				parsedSoFar.textContent = `Posts processed: ${parsedPosts.length}`;
+					const parsedSoFar = document.getElementById("parsedSoFar");
+					parsedSoFar.textContent = `Posts processed: ${parsedPosts.length}`;
 
-				postsToInject.forEach((parsedPost) => {
-					const postDivWrapper = document.createElement("div");
-					postDivWrapper.id = `${parsedPost.contentId}Wrapper`;
-					postDivWrapper.style.cssText = "flex: 1; display: flex; flexDirection: row;";
+					postsToInject.forEach((parsedPost) => {
+						const postDivWrapper = document.createElement("div");
+						postDivWrapper.id = `${parsedPost.contentId}Wrapper`;
+						postDivWrapper.style.cssText = "flex: 1; display: flex; flexDirection: row;";
 
-					postsTableFields.forEach(({ id, label, flex, opts = {} }) => {
-						const newCellField = document.createElement("div");
-						newCellField.id = `${label}cellField`;
-						newCellField.style.cssText = `flex: ${flex}; border-right: solid 1px; border-color: rgb(0, 0, 0, 0.25); border-bottom: solid 1px rgb(0, 0, 0, 0.2); padding: 5px;`;
+						postsTableFields.forEach(({ id, label, flex, opts = {} }) => {
+							const newCellField = document.createElement("div");
+							newCellField.id = `${label}cellField`;
+							newCellField.style.cssText = `flex: ${flex}; border-right: solid 1px; border-color: rgb(0, 0, 0, 0.25); border-bottom: solid 1px rgb(0, 0, 0, 0.2); padding: 5px;`;
 
-						// nested ternary as a guard against null values expected to have 'length' property
-						newCellField.textContent = opts.length ? (parsedPost[id] && parsedPost[id].length) : parsedPost[id];
-						postDivWrapper.appendChild(newCellField);
+							// nested ternary as a guard against null values expected to have 'length' property
+							newCellField.textContent = opts.length ? (parsedPost[id] && parsedPost[id].length) : parsedPost[id];
+							postDivWrapper.appendChild(newCellField);
+						});
+
+						parsedPostsWrapper.prepend(postDivWrapper);
 					});
 
-					parsedPostsWrapper.prepend(postDivWrapper);
-				});
+					chrome.storage.local.get(["recordsToPull"], ({ recordsToPull = 5 }) => {
+						// recordsToPull = 10;
+						if (recordsToPull && recordsToPull === parsedPosts.length) {
+							// remove user information & user warning div
+							helpers.removeInjection("userInfo");
+							helpers.removeInjection("userWarning");
+							helpers.removeInjection("submitButton");
 
-				chrome.storage.local.get(["recordsToPull"], ({ recordsToPull = 5 }) => {
-					recordsToPull = 100;
-					if (recordsToPull && recordsToPull === parsedPosts.length) {
-						// remove user information & user warning div
-						helpers.removeInjection("userInfo");
-						helpers.removeInjection("userWarning");
-						helpers.removeInjection("submitButton");
+							// Append the Submit button only when all results were loaded into the table
+							const submitButton = document.createElement("div");
+							submitButton.id = "submitButton";
+							submitButton.style.cssText = "padding: 10px 20px; margin-left: 20px; margin-bottom: 20px; border-radius: 5px; width: 80px; text-align: center; font-size: 14px; background-color: #6699ff";
+							submitButton.textContent = "Submit";
+							submitButton.onmouseover = () => submitButton.style.cursor = "pointer";
+							submitButton.onclick = () => chrome.runtime.sendMessage({ action: "publishPosts" });
 
-						// Append the Submit button only when all results were loaded into the table
-						const submitButton = document.createElement("div");
-						submitButton.id = "submitButton";
-						submitButton.style.cssText = "padding: 10px 20px; margin-left: 20px; margin-bottom: 20px; border-radius: 5px; width: 80px; text-align: center; font-size: 14px; background-color: #6699ff";
-						submitButton.textContent = "Submit";
-						submitButton.onmouseover = () => submitButton.style.cursor = "pointer";
-						submitButton.onclick = () => chrome.runtime.sendMessage({ action: "publishPosts" });
-
-						headerWrapperDiv.appendChild(submitButton);
-					}
-				});
+							headerWrapperDiv.appendChild(submitButton);
+						}
+					});
+				}
+				break;
 			}
-			break;
-		}
-		default: break;
+			default: break;
 		}
 	}
 }

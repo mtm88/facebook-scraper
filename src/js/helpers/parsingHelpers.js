@@ -93,6 +93,7 @@ function fieldParser() {
 				try {
 					const author = comment.getElementsByClassName("UFICommentActorAndBody")[0].children[0].children[0].textContent;
 					const commentBody = comment.getElementsByClassName("UFICommentBody")[0].textContent;
+					
 					return {
 						contentId: `${contentId}-comment${i}`,
 						author,
