@@ -13,7 +13,7 @@
                 "--require",
                 "babel-polyfill",
                 "--timeout",
-                "10000",
+                "20000",
                 "--colors",
                 "--recursive",
                 "${workspaceFolder}/test"
