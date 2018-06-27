@@ -42,11 +42,13 @@ async function getPluginBuffer(fileName) {
 	});
 }
 
-describe.only("Facebook scraper", function () {
-	it("works", async function () {
+describe.only("Facebook Scraper functionality", function () {
+	let driver;
+
+	before(async () => {
 		const pluginBuffer = await getPluginBuffer("JSScraper.Facebook.crx");
 
-		const driver = await new Builder()
+		driver = await new Builder()
 			.forBrowser("chrome")
 			.setChromeOptions(new chrome.Options()
 				.addArguments([
@@ -57,6 +59,9 @@ describe.only("Facebook scraper", function () {
 				.addExtensions(pluginBuffer)
 			)
 			.build();
+	});
+
+	it("Logins to Facebook and gets 'You must authenticate' message from the plugin", async () => {
 		try {
 			await driver.get("http://facebook.com");
 
@@ -69,16 +74,25 @@ describe.only("Facebook scraper", function () {
 			const loginButton = await driver.findElement(By.id("loginbutton"));
 			await loginButton.click();
 
-			await driver.get("http://www.facebook.com/search/str/lego/stories-keyword/stories-public");
-			driver.executeScript(() => document.getElementById("hiddenDiv").click());
+			// await driver.get("http://www.facebook.com/search/str/lego/stories-keyword/stories-public");
+			await driver.executeScript(() => document.getElementById("hiddenDiv").click());
 
 			const alertPresent = await driver.wait(until.alertIsPresent());
-			
+
 			expect(alertPresent).to.exist;
+			alertPresent.getText().then((alertMessage) => {
+				expect(alertMessage).to.eq("Please insert your Login & Password in the plugin options");
+				alertPresent.dismiss();
+			});
+
 		} catch (error) {
 			console.log(error);
-		} finally {
-			await driver.quit();
 		}
+	});
+
+	it("goes to options page and sets up authentication", async () => {
+		await driver.get("chrome://extensions");
+		const itemsContainer = await driver.wait(until.elementLocated(By.id("devModeLabel")));
+		debugger;
 	});
 });
