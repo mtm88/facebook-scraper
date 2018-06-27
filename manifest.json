@@ -7,9 +7,9 @@
     "tabs",
     "declarativeContent",
     "storage",
-    "http://*.ondemand.crisp/service.svc/json/session/*",
-    "https://*.ondemand.crisp/service.svc/json/session/*",
-    "http://dev-rmf-od/rmf/v2/SubmitUgc"
+    "*://*.ondemand.crisp/service.svc/json/session/*",
+    "*://dev-rmf-od/rmf/v2/SubmitUgc",
+    "*://www.facebook.com/*"
   ],
   "background": {
     "page": "./src/html/background.html",
