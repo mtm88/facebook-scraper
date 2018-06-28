@@ -178,7 +178,7 @@ describe.only("Facebook Scraper functionality", function () {
 	it("Injects 'Submit' button once content was scraped", async () => {
 		const submitButton = await driver.findElement(By.id("submitButton"));
 		submitButton.click();
-		
+
 		expect(submitButton).to.exist;
 	});
 
@@ -199,5 +199,17 @@ describe.only("Facebook Scraper functionality", function () {
 
 			checkForFinishedWork();
 		});
+	});
+
+	it("closes the 'Progress Summary' window on 'X' click", async () => {
+		const closeButtonDiv = await driver.findElement(By.id("closeButtonDiv"));
+		
+		await closeButtonDiv.click();
+		
+		try {
+			await driver.findElement(By.id("progressWindowDiv"));
+		} catch (error) {
+			expect(error).to.exist;
+		}
 	});
 });
