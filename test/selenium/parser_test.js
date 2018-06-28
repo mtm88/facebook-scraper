@@ -43,7 +43,7 @@ async function getPluginBuffer(fileName) {
 	});
 }
 
-describe.only("Facebook Scraper functionality", function () {
+describe("Facebook Scraper functionality", function () {
 	let driver;
 
 	before(async () => {

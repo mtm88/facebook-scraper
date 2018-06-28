@@ -31,7 +31,7 @@ describe("Parsing Helpers", () => {
 				.then((parsedPost) => {
 					expect(parsedPost).to.be.an("object");
 
-					expect(parsedPost.author.replace(/(\r\n\t|\n|\r\t)/gm, "").trim()).to.eq("ITV News");
+					expect(parsedPost.author.replace(/\s\s+/g, "").trim()).to.eq("ITV Newsis live now.");
 					expect(parsedPost).to.have.property("comments", 889);
 					expect(parsedPost).to.have.property("contentId", "10155949582962672");
 					expect(parsedPost).to.have.property("link", null);
@@ -39,7 +39,7 @@ describe("Parsing Helpers", () => {
 					expect(parsedPost).to.have.property("searchURL", "https://www.facebook.com/search/top/");
 					expect(parsedPost).to.have.property("shares", 283);
 					expect(parsedPost).to.have.property("timeAdded", "20/06/2018 09:30");
-					expect(parsedPost.title.replace(/(\r\n\t|\n|\r\t)/gm, "").trim()).to.eq("The bosses of				ASDA and Sainsbury's are questioned by MPs on their proposed merger");
+					expect(parsedPost.title.replace(/\s\s+/g, "").trim()).to.eq("ITV Newsis live now.·1 hr·The bosses ofASDA and Sainsbury\'s are questioned by MPs on their proposed merger");
 				});
 		});
 	});

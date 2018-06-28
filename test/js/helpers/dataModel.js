@@ -32,12 +32,11 @@ describe("Data Model", () => {
 		it("Properly sets required request parameters on the model instance", function () {
 			this.modelInstance.parseDataForPublish();
 			const { parsedData } = this.modelInstance;
+			
 			expect(parsedData).to.have.property("ApiKey");
 			expect(parsedData).to.have.property("contentID");
 			expect(parsedData).to.have.property("contentType");
 			expect(parsedData).to.have.property("Author");
-
-			expect(parsedData.contentType).to.eq("test.content.type");
 		});
 
 		it("Sets the Author name to 'Unknown' if not included in data object", function () {
