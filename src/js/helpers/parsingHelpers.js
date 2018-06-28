@@ -92,11 +92,13 @@ function fieldParser() {
 			return userComments.map((comment, i) => {
 				try {
 					const author = comment.getElementsByClassName("UFICommentActorAndBody")[0].children[0].children[0].textContent;
+					const link = comment.getElementsByClassName("UFICommentActorAndBody")[0].children[0].children[0].getAttribute("href");
 					const commentBody = comment.getElementsByClassName("UFICommentBody")[0].textContent;
 					
 					return {
 						contentId: `${contentId}-comment${i}`,
 						author,
+						link,
 						commentBody,
 					};
 				} catch (error) {
