@@ -93,12 +93,14 @@ function fieldParser() {
 				try {
 					const author = comment.getElementsByClassName("UFICommentActorAndBody")[0].children[0].children[0].textContent;
 					const link = comment.getElementsByClassName("UFICommentActorAndBody")[0].children[0].children[0].getAttribute("href");
+					const authorImage = comment.getElementsByClassName("img UFIActorImage")[0].getAttribute("src");
 					const commentBody = comment.getElementsByClassName("UFICommentBody")[0].textContent;
 					
 					return {
 						contentId: `${contentId}-comment${i}`,
 						author,
 						link,
+						authorImage,
 						commentBody,
 					};
 				} catch (error) {

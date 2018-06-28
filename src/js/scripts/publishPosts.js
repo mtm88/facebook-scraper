@@ -95,7 +95,8 @@ function parseCommentModels({ commentsContent = [] }, selectedPageDetails) {
 		const textType = "text/plain";
 		commentModel.addField("Author", comment.author, 0, textType);
 		commentModel.addField("Link", comment.link, 1, textType);
-		commentModel.addField("Comment", comment.commentBody, 2, textType);
+		commentModel.addField("Image", comment.authorImage, 2, textType);
+		commentModel.addField("Comment", comment.commentBody, 3, textType);
 
 		return JSON.stringify(commentModel.parsedData);
 	});
