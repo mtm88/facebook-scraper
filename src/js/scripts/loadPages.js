@@ -4,13 +4,13 @@ function loadPages() {
 	return chrome.storage.sync.get(["isAuthed", "token"], ({ isAuthed, token }) => {
 		if (!isAuthed || !token) {
 			// doubled security to ensure user went through authentication before trying to pull pages
-			chrome.runtime.sendMessage({ action: "injectSelector" });
+			return chrome.runtime.sendMessage({ action: "injectSelector" });
 		}
 
 		xhr.onreadystatechange = () => updateReqStatus(xhr);
 		xhr.open("GET", opts.config.APIconfig.pagesURL, true);
 		xhr.setRequestHeader("Authorization", `Token ${token}`);
-		xhr.send();
+		return xhr.send();
 	});
 
 	function updateReqStatus({ readyState, status, responseText }) {

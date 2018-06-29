@@ -45,7 +45,7 @@ chrome.runtime.onInstalled.addListener(function () {
 	});
 });
 
-chrome.runtime.onMessage.addListener(function ({ action, payload }) {
+chrome.runtime.onMessage.addListener(function ({ action, payload: { pageId, recordsToPull } = {} }) {
 	switch (action) {
 		case "injectSelector": {
 			return chrome.storage.sync.get(["isAuthed", "token"], ({ isAuthed, token }) => {
@@ -58,17 +58,25 @@ chrome.runtime.onMessage.addListener(function ({ action, payload }) {
 						return scriptRunner("loadPages");
 					}
 
-					return scriptRunner("injectSelector", { pages });
+					return chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+						if (tabs && tabs[0]) {
+							const tabURL = tabs[0].url;
+							const queryParams = {};
+							tabURL.replace(new RegExp("([^?=&]+)(=([^&]*))?", "g"), ($0, $1, $2, $3) => queryParams[$1] = $3);
+
+							const { page, recordsToPull = 50 } = queryParams;
+
+							if (page) {
+								return setupAndRunContentScraper({ pageId: page, recordsToPull });
+							}
+							return scriptRunner("injectSelector", { pages });
+						}
+					});
 				}));
 			});
 		}
 		case "userSelectedPage": {
-			return chrome.storage.local.set({
-				parsedPosts: [],
-				divsWithPostLength: 0,
-				selectedPageId: payload.pageId,
-				recordsToPull: payload.recordsToPull,
-			}, () => scriptRunner("contentScraper"));
+			return setupAndRunContentScraper({ pageId, recordsToPull });
 		}
 		case "displayProgressWindow": {
 			return scriptRunner("progressWindow");
@@ -85,6 +93,15 @@ chrome.tabs.onUpdated.addListener(function (tabId, { status }, { url }) {
 		scriptRunner("injectTestDiv");
 	}
 });
+
+function setupAndRunContentScraper({ pageId, recordsToPull }) {
+	return chrome.storage.local.set({
+		parsedPosts: [],
+		divsWithPostLength: 0,
+		selectedPageId: pageId,
+		recordsToPull,
+	}, () => scriptRunner("contentScraper"));
+}
 
 function scriptRunner(fileName, opts = {}) {
 	return chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
