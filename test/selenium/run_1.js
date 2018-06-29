@@ -210,6 +210,7 @@ describe("Facebook Scraper functionality", function () {
 			await driver.findElement(By.id("progressWindowDiv"));
 		} catch (error) {
 			expect(error).to.exist;
+			driver.quit();
 		}
 	});
 });
