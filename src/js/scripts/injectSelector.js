@@ -13,7 +13,7 @@ function injectSelectionMenu() {
 		div.appendChild(scriptHelpers.buildMessageParagraph());
 
 		if (opts && opts.pages && opts.pages.length) {
-			div.appendChild(scriptHelpers.buildContentDiv());
+			div.appendChild(scriptHelpers.buildContentDiv({ opts }));
 		}
 
 		if (userSeesModal) {

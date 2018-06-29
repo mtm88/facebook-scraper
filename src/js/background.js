@@ -45,7 +45,7 @@ chrome.runtime.onInstalled.addListener(function () {
 	});
 });
 
-chrome.runtime.onMessage.addListener(function ({ action, payload: { pageId, recordsToPull } = {} }) {
+chrome.runtime.onMessage.addListener(function ({ action, payload: { pageId, recordsToPull, fetchComments } = {} }) {
 	switch (action) {
 		case "injectSelector": {
 			return chrome.storage.sync.get(["isAuthed", "token"], ({ isAuthed, token }) => {
@@ -64,19 +64,19 @@ chrome.runtime.onMessage.addListener(function ({ action, payload: { pageId, reco
 							const queryParams = {};
 							tabURL.replace(new RegExp("([^?=&]+)(=([^&]*))?", "g"), ($0, $1, $2, $3) => queryParams[$1] = $3);
 
-							const { page, recordsToPull = 50 } = queryParams;
+							const { page, fetchComments = false, recordsToPull = 50 } = queryParams;
 
 							if (page) {
-								return setupAndRunContentScraper({ pageId: page, recordsToPull });
+								return setupAndRunContentScraper({ pageId: page, recordsToPull, fetchComments });
 							}
-							return scriptRunner("injectSelector", { pages });
+							return scriptRunner("injectSelector", { pages, fetchComments });
 						}
 					});
 				}));
 			});
 		}
 		case "userSelectedPage": {
-			return setupAndRunContentScraper({ pageId, recordsToPull });
+			return setupAndRunContentScraper({ pageId, recordsToPull, fetchComments });
 		}
 		case "displayProgressWindow": {
 			return scriptRunner("progressWindow");
@@ -94,12 +94,13 @@ chrome.tabs.onUpdated.addListener(function (tabId, { status }, { url }) {
 	}
 });
 
-function setupAndRunContentScraper({ pageId, recordsToPull }) {
+function setupAndRunContentScraper({ pageId, recordsToPull, fetchComments }) {
 	return chrome.storage.local.set({
 		parsedPosts: [],
 		divsWithPostLength: 0,
 		selectedPageId: pageId,
 		recordsToPull,
+		fetchComments,
 	}, () => scriptRunner("contentScraper"));
 }
 

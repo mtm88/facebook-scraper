@@ -38,7 +38,7 @@ function buildCloseButtonDiv(divId) {
 	return closeDiv;
 }
 
-function buildContentDiv() {
+function buildContentDiv({ opts }) {
 	const contentDiv = document.createElement("div");
 	contentDiv.id = "contentDiv";
 	contentDiv.style.cssText = "display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start; margin: 0px 5px 30px;";
@@ -59,7 +59,7 @@ function buildContentDiv() {
 			pageDiv.style["background-color"] = "#ffffff";
 		};
 
-		pageDiv.onclick = () => chrome.runtime.sendMessage({ action: "userSelectedPage", payload: { pageId, recordsToPull } });
+		pageDiv.onclick = () => chrome.runtime.sendMessage({ action: "userSelectedPage", payload: { pageId, recordsToPull, fetchComments } });
 
 		contentDiv.appendChild(pageDiv);
 	});

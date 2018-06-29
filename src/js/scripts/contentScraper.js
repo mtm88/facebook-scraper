@@ -36,6 +36,7 @@ function fetchContentPosts(parentElement, scrollCounter = 0, userSeesModal) {
 				divsWithPost = Array.from(divsWithPost).slice(0, recordsToPull);
 			}
 
+			// ZMIEN TO W PONIEDZIALEK TAK ZEBY BRALO COMMENTY TYLKO JESLI STORE MA UTAWIONE FETCH COMMENTS
 			const promisesToProcess = Array.from(divsWithPost).map(div => () =>
 				fetchPostComments(div).then((postWithContent) => helpers.parsePostWithContent(postWithContent)));
 
