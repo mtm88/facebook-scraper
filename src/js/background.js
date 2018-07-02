@@ -28,7 +28,7 @@ import {
 } from "./helpers/progressWindowHelpers.js";
 import { removeInjection } from "./scripts/removeInjection.js";
 import { DataModel } from "./helpers/dataModel.js";
-import { parseQueryParams } from "./helpers/backgroundHelper";
+import { parseQueryParams } from "./helpers/backgroundHelper.js";
 
 import { APIconfig } from "./config.js";
 
