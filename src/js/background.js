@@ -72,6 +72,7 @@ chrome.runtime.onMessage.addListener(function ({ action, payload: { pageId, reco
 								if (selectedPageDetails) {
 									return setupAndRunContentScraper({ pageId: selectedPageDetails.settings.pageId, recordsToPull, fetchComments });
 								}
+								// don't return, will allow to jump to injectSelector and select page manually
 								alert("Sorry, requested Page couldn't be found. Check your URL and try again.");
 							}
 							return scriptRunner("injectSelector", { pages, fetchComments });
@@ -103,12 +104,9 @@ chrome.runtime.onMessage.addListener(function ({ action, payload: { pageId, reco
 
 // only for Selenium needs to trick browser into starting the plugin
 chrome.tabs.onUpdated.addListener(async (tabId, info, { url }) => {
-	if (url.includes("TEST_ENV=true")) {
-		chrome.storage.local.set({ TEST_ENV: true });
-		return scriptRunner("injectTestDiv");
-	}
-
-	return chrome.storage.local.get(["TEST_ENV"], ({ TEST_ENV }) => TEST_ENV ? scriptRunner("injectTestDiv") : null);
+	return url.includes("TEST_ENV=true") ?
+		scriptRunner("injectTestDiv") :
+		chrome.storage.local.get(["TEST_ENV"], ({ TEST_ENV }) => TEST_ENV ? scriptRunner("injectTestDiv") : null);
 });
 
 function setupAndRunContentScraper({ pageId, recordsToPull, fetchComments }) {

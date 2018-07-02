@@ -9,6 +9,7 @@ function injectTestDiv() {
 		hiddenDiv.onclick = () => chrome.runtime.sendMessage({ action: "injectSelector" });
 
 		return chrome.storage.local.set({
+			TEST_ENV: true,
 			pages: [
 				{
 					name: "Selenium Test Page",
