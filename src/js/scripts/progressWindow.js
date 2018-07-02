@@ -1,4 +1,3 @@
-
 async function activateProgressWindow() {
 	await displayProgressWindow();
 	
@@ -130,7 +129,7 @@ function displayProgressWindow() {
 			const builtParagraph = await scriptHelpers.buildLoadedSoFarParagraph();
 			headerWrapperDiv.appendChild(builtParagraph);
 		} catch (error) {
-			console.error(error);
+			throw new AssertionError(error);
 		}
 
 		headerWrapperDiv.appendChild(scriptHelpers.buildParsedSoFarParagraph());
