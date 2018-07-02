@@ -5,7 +5,19 @@ function injectTestDiv() {
 	hiddenDiv.textContent = chrome.runtime.id;
 	hiddenDiv.onclick = () => chrome.runtime.sendMessage({ action: "injectSelector" });
 
-	document.body.appendChild(hiddenDiv);
+	return chrome.storage.local.set({
+		pages: [
+			{
+				name: "Selenium Test Page",
+				settings: {
+					pageId: 0,
+					recordsToPull: 3,
+				},
+			},
+		],
+	}, () => {
+		document.body.appendChild(hiddenDiv);
+	});
 }
 
 injectTestDiv();

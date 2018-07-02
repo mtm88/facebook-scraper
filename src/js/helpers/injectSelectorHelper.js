@@ -43,7 +43,7 @@ function buildContentDiv({ opts: { pages, fetchComments } = {} }) {
 	contentDiv.id = "contentDiv";
 	contentDiv.style.cssText = "display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start; margin: 0px 5px 30px;";
 
-	pages.forEach(({ settings: { pageId }, name, recordsToPull = 50 }) => {
+	pages.forEach(({ settings: { pageId, recordsToPull = 50 }, name, }) => {
 		const pageDiv = document.createElement("div");
 
 		pageDiv.id = pageId;

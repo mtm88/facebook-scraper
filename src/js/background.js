@@ -96,9 +96,9 @@ chrome.runtime.onMessage.addListener(function ({ action, payload: { pageId, reco
 	}
 });
 
-chrome.tabs.onUpdated.addListener(function (tabId, { status }, { url }) {
+chrome.tabs.onUpdated.addListener(async function (tabId, { status }, { url }) {
 	if (status && status === "complete" && url.includes("https://www.facebook.com")) {
-		scriptRunner("injectTestDiv");
+		await scriptRunner("injectTestDiv");
 	}
 });
 
