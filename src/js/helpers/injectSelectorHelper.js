@@ -38,12 +38,12 @@ function buildCloseButtonDiv(divId) {
 	return closeDiv;
 }
 
-function buildContentDiv({ opts }) {
+function buildContentDiv({ opts: { pages, fetchComments } = {} }) {
 	const contentDiv = document.createElement("div");
 	contentDiv.id = "contentDiv";
 	contentDiv.style.cssText = "display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start; margin: 0px 5px 30px;";
 
-	opts.pages.forEach(({ settings: { pageId }, name, recordsToPull = 50 }) => {
+	pages.forEach(({ settings: { pageId }, name, recordsToPull = 50 }) => {
 		const pageDiv = document.createElement("div");
 
 		pageDiv.id = pageId;
