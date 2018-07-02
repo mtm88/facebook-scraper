@@ -1,15 +1,20 @@
 
 async function activateProgressWindow() {
 	await displayProgressWindow();
-
+	
 	postsTableFields = [
 		{ id: "title", label: "Title", flex: 4 },
 		{ id: "author", label: "Author", flex: 2 },
 		{ id: "shares", label: "Shares", flex: 1 },
 		{ id: "comments", label: "Comments", flex: 1 },
-		{ id: "commentsContent", label: "Comments & Responses scraped", flex: 1, opts: { length: true } },
 		{ id: "reactions", label: "Reactions", flex: 1 },
 	];
+	
+	const { fetchComments } = opts;
+
+	if (fetchComments) {
+		postsTableFields.push({ id: "commentsContent", label: "Comments & Responses scraped", flex: 1, opts: { length: true } });
+	}
 
 	const headerFieldsWrapper = document.getElementById("headerFieldsWrapper");
 

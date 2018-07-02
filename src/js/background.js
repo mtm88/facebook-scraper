@@ -61,10 +61,9 @@ chrome.runtime.onMessage.addListener(function ({ action, payload: { pageId, reco
 					return chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
 						if (tabs && tabs[0]) {
 							const tabURL = tabs[0].url;
-							const queryParams = {};
-							tabURL.replace(new RegExp("([^?=&]+)(=([^&]*))?", "g"), ($0, $1, $2, $3) => queryParams[$1] = $3);
-
-							const { page, fetchComments = false, recordsToPull = 50 } = queryParams;
+							const { page, recordsToPull = 50 } = parseQueryParams(tabURL);
+							let { fetchComments } = parseQueryParams(tabURL);
+							fetchComments = fetchComments ? fetchComments !== "false" : false;
 
 							if (page) {
 								return setupAndRunContentScraper({ pageId: page, recordsToPull, fetchComments });
@@ -79,7 +78,15 @@ chrome.runtime.onMessage.addListener(function ({ action, payload: { pageId, reco
 			return setupAndRunContentScraper({ pageId, recordsToPull, fetchComments });
 		}
 		case "displayProgressWindow": {
-			return scriptRunner("progressWindow");
+			return chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+				if (tabs && tabs[0]) {
+					const tabURL = tabs[0].url;
+					let { fetchComments = false } = parseQueryParams(tabURL);
+					fetchComments = fetchComments ? fetchComments !== "false" : false;
+
+					return scriptRunner("progressWindow", { fetchComments });
+				}
+			});
 		}
 		case "publishPosts": {
 			return chrome.storage.sync.get(["token"], ({ token }) => scriptRunner("publishPosts", { token }));
@@ -93,6 +100,13 @@ chrome.tabs.onUpdated.addListener(function (tabId, { status }, { url }) {
 		scriptRunner("injectTestDiv");
 	}
 });
+
+function parseQueryParams(rawURL) {
+	const queryParams = {};
+	rawURL.replace(new RegExp("([^?=&]+)(=([^&]*))?", "g"), ($0, $1, $2, $3) => queryParams[$1] = $3);
+
+	return queryParams;
+}
 
 function setupAndRunContentScraper({ pageId, recordsToPull, fetchComments }) {
 	return chrome.storage.local.set({

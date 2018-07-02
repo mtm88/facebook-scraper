@@ -37,9 +37,8 @@ function fetchContentPosts(parentElement, scrollCounter = 0, userSeesModal) {
 			}
 
 			let promisesToProcess;
-			const shouldFetchComments = !fetchComments || fetchComments !== "false";
 
-			if (shouldFetchComments) {
+			if (fetchComments) {
 				promisesToProcess = Array.from(divsWithPost).map(div => () =>
 					fetchPostComments(div).then((postWithContent) => helpers.parsePostWithContent(postWithContent)));
 			} else {
