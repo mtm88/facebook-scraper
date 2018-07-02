@@ -96,10 +96,14 @@ chrome.runtime.onMessage.addListener(function ({ action, payload: { pageId, reco
 	}
 });
 
-chrome.tabs.onUpdated.addListener(async function (tabId, { status }, { url }) {
-	if (status && status === "complete" && url.includes("https://www.facebook.com")) {
-		await scriptRunner("injectTestDiv");
+// only for Selenium needs to trick browser into starting the plugin
+chrome.tabs.onUpdated.addListener(async (tabId, info, { url }) => {
+	if (url.includes("TEST_ENV=true")) {
+		chrome.storage.local.set({ TEST_ENV: true });
+		return scriptRunner("injectTestDiv");
 	}
+
+	return chrome.storage.local.get(["TEST_ENV"], ({ TEST_ENV }) => TEST_ENV ? scriptRunner("injectTestDiv") : null);
 });
 
 function setupAndRunContentScraper({ pageId, recordsToPull, fetchComments }) {

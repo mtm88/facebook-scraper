@@ -7,7 +7,7 @@ function authenticateWithPlugin() {
 	describe("Plugin Authentication functionality", function () {
 		it("Logins to Facebook and gets 'You must authenticate' message from the plugin", async function () {
 			try {
-				await this.driver.get("http://facebook.com");
+				await this.driver.get("http://facebook.com?TEST_ENV=true");
 
 				const emailElement = await this.driver.findElement(By.id("email"));
 				await emailElement.sendKeys(userConfig.fbUsername);
