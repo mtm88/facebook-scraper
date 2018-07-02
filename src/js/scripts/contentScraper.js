@@ -20,7 +20,7 @@ function contentScraper() {
 contentScraper();
 
 function fetchContentPosts(parentElement, scrollCounter = 0, userSeesModal) {
-	chrome.storage.local.get(["recordsToPull"], ({ recordsToPull = 50 }) => {
+	chrome.storage.local.get(["recordsToPull", "fetchComments"], ({ recordsToPull = 50, fetchComments = false }) => {
 		divsWithPost = parentElement.getElementsByClassName("userContentWrapper") || [];
 		const divsWithPostLength = divsWithPost.length;
 
@@ -36,9 +36,15 @@ function fetchContentPosts(parentElement, scrollCounter = 0, userSeesModal) {
 				divsWithPost = Array.from(divsWithPost).slice(0, recordsToPull);
 			}
 
-			// ZMIEN TO W PONIEDZIALEK TAK ZEBY BRALO COMMENTY TYLKO JESLI STORE MA UTAWIONE FETCH COMMENTS
-			const promisesToProcess = Array.from(divsWithPost).map(div => () =>
-				fetchPostComments(div).then((postWithContent) => helpers.parsePostWithContent(postWithContent)));
+			let promisesToProcess;
+			const shouldFetchComments = !fetchComments || fetchComments !== "false";
+
+			if (shouldFetchComments) {
+				promisesToProcess = Array.from(divsWithPost).map(div => () =>
+					fetchPostComments(div).then((postWithContent) => helpers.parsePostWithContent(postWithContent)));
+			} else {
+				promisesToProcess = Array.from(divsWithPost).map(div => () => helpers.parsePostWithContent(div));
+			}
 
 			return promisesToProcess.reduce((div, nextDiv) => div.then(post => nextDiv().then(Array.prototype.concat.bind(post))), Promise.resolve([]));
 		}
