@@ -8,6 +8,11 @@ import { expect } from "chai";
 
 import jsdom from "jsdom";
 
+const opts = {
+	pages: [],
+	fetchComments: false,
+};
+
 const { JSDOM } = jsdom;
 
 describe("Inject Selector Helpers", () => {
@@ -65,8 +70,8 @@ describe("Inject Selector Helpers", () => {
 			};
 		});
 		it("returns a properly formatted content DIV element", () => {
-			const contentDivToInject = buildContentDiv();
-			expect(contentDivToInject.outerHTML).to.eq(`<div id="contentDiv" style="display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start; margin: 0px 5px 30px;"><div id="0" style="padding: 10px 20px; margin: 10px; border: 1px solid; border-radius: 3px;"></div></div>`);  // eslint-disable-line quotes
+			const contentDivToInject = buildContentDiv({ opts });
+			expect(contentDivToInject.outerHTML).to.eq(`<div id="contentDiv" style="display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start; margin: 0px 5px 30px;"></div>`);  // eslint-disable-line quotes
 		});
 	});
 });
