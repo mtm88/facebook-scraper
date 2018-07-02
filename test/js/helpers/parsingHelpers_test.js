@@ -39,7 +39,7 @@ describe("Parsing Helpers", () => {
 					expect(parsedPost).to.have.property("searchURL", "https://www.facebook.com/search/top/");
 					expect(parsedPost).to.have.property("shares", 283);
 					expect(parsedPost).to.have.property("timeAdded", "20/06/2018 09:30");
-					expect(parsedPost.title.replace(/\s\s+/g, "").trim()).to.eq("ITV Newsis live now.·1 hr·The bosses ofASDA and Sainsbury\'s are questioned by MPs on their proposed merger");
+					expect(parsedPost.title.replace(/\s\s+/g, "").trim()).to.eq("ITV Newsis live now.·1 hr·The bosses ofASDA and Sainsbury\'s are questioned by MPs on their proposed merger"); //eslint-disable-line no-useless-escape
 				});
 		});
 	});

@@ -67,8 +67,10 @@ function storageChangeListener(storage) {
 						parsedPostsWrapper.prepend(postDivWrapper);
 					});
 
-					chrome.storage.local.get(["recordsToPull"], ({ recordsToPull = 5 }) => {
-						if (recordsToPull && recordsToPull === parsedPosts.length) {
+					chrome.storage.local.get(["recordsToPull"], ({ recordsToPull }) => {
+						const recordsToPullInt = parseInt(recordsToPull, 10);
+
+						if (recordsToPull && recordsToPullInt === parsedPosts.length) {
 							// remove user information & user warning div
 							helpers.removeInjection("userInfo");
 							helpers.removeInjection("userWarning");
