@@ -28,6 +28,7 @@ import {
 } from "./helpers/progressWindowHelpers.js";
 import { removeInjection } from "./scripts/removeInjection.js";
 import { DataModel } from "./helpers/dataModel.js";
+import { parseQueryParams } from "./helpers/backgroundHelper";
 
 import { APIconfig } from "./config.js";
 
@@ -100,13 +101,6 @@ chrome.tabs.onUpdated.addListener(function (tabId, { status }, { url }) {
 		scriptRunner("injectTestDiv");
 	}
 });
-
-function parseQueryParams(rawURL) {
-	const queryParams = {};
-	rawURL.replace(new RegExp("([^?=&]+)(=([^&]*))?", "g"), ($0, $1, $2, $3) => queryParams[$1] = $3);
-
-	return queryParams;
-}
 
 function setupAndRunContentScraper({ pageId, recordsToPull, fetchComments }) {
 	return chrome.storage.local.set({
