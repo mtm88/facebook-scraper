@@ -21,18 +21,6 @@ global.scriptHelpers = {
 	buildContentDiv,
 };
 
-global.opts = {
-	pages: [
-		{
-			settings: {
-				pageId: 0,
-				recordsToPull: 50,
-			},
-		},
-	],
-};
-
-
 async function getPluginBuffer(fileName) {
 	return new Promise((resolve, reject) => {
 		return fs.readFile(path.resolve(__dirname, `../../${fileName}`), "base64", (error, results) => {
@@ -44,7 +32,7 @@ async function getPluginBuffer(fileName) {
 	});
 }
 
-describe("Scraping functionality without query params", async function () {
+describe.only("Scraping functionality without query params", async function () {
 	before(async function () {
 		const pluginBuffer = await getPluginBuffer("JSScraper.Facebook.crx");
 
@@ -76,10 +64,10 @@ describe("Scraping functionality without query params", async function () {
 		});
 
 		it("selects the Page and starts the Scraper", async function () {
-			const pageDiv = await this.driver.findElement(By.id("211538576062206"));
+			const pageDiv = await this.driver.findElement(By.id("0"));
 			await pageDiv.click();
-
 			const progressSummaryDiv = await this.driver.wait(until.elementLocated(By.id("progressWindowDiv")));
+
 			expect(progressSummaryDiv).to.exist;
 		});
 
@@ -91,7 +79,7 @@ describe("Scraping functionality without query params", async function () {
 		it("checks the Scraper for progress", function () {
 			return new Promise(async (resolve) => {
 				const parsedPostsWrapper = await this.driver.findElement(By.id("parsedPostsWrapper"));
-				const defaultCount = 10;
+				const defaultCount = 3;
 
 				async function checkForProgress() {
 					const wrapperChildren = await parsedPostsWrapper.findElements(By.id("TitlecellField"));
@@ -106,20 +94,19 @@ describe("Scraping functionality without query params", async function () {
 					}
 				}
 
-				async function checkForLoadedContent() {
-					const currentLoadedCount = await this.driver.findElement(By.id("loadedSoFar")).getAttribute("textContent");
+				async function checkForLoadedContent(driver) {
+					const currentLoadedCount = await driver.findElement(By.id("loadedSoFar")).getAttribute("textContent");
 
 					try {
 						expect(currentLoadedCount).to.include(defaultCount);
 						return checkForProgress();
 					} catch (error) {
 						setTimeout(() => {
-							return checkForLoadedContent();
+							return checkForLoadedContent(driver);
 						}, 1000);
 					}
 				}
-
-				return checkForLoadedContent();
+				return checkForLoadedContent(this.driver);
 			});
 		});
 
@@ -132,20 +119,22 @@ describe("Scraping functionality without query params", async function () {
 
 		it("displays 'Job done' message once the content was sent", async function () {
 			return new Promise((resolve) => {
-				async function checkForFinishedWork() {
+				async function checkForFinishedWork(driver) {
 					try {
-						const sentRequestsP = await this.driver.findElement(By.id("sentRequestsP")).getAttribute("textContent");
+						const sentRequestsP = await driver.findElement(By.id("sentRequestsP")).getAttribute("textContent");
+
 						expect(sentRequestsP).to.exist;
 						expect(sentRequestsP).to.eq("All posts have been successfully published");
+						
 						return resolve();
 					} catch (e) {
-						setTimeout(() => {
-							checkForFinishedWork();
+						setTimeout(function () {
+							checkForFinishedWork(driver);
 						}, 2000);
 					}
 				}
 
-				checkForFinishedWork();
+				checkForFinishedWork(this.driver);
 			});
 		});
 
