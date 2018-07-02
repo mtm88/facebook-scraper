@@ -67,7 +67,12 @@ chrome.runtime.onMessage.addListener(function ({ action, payload: { pageId, reco
 							fetchComments = fetchComments ? fetchComments !== "false" : false;
 
 							if (page) {
-								return setupAndRunContentScraper({ pageId: page, recordsToPull, fetchComments });
+								const selectedPageDetails = pages.find(({ name }) => name === page);
+
+								if (selectedPageDetails) {
+									return setupAndRunContentScraper({ pageId: selectedPageDetails.settings.pageId, recordsToPull, fetchComments });
+								}
+								alert("Sorry, requested Page couldn't be found. Check your URL and try again.");
 							}
 							return scriptRunner("injectSelector", { pages, fetchComments });
 						}
